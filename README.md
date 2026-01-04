@@ -2,6 +2,10 @@
 Creates a stellar evolution animation for binary systems simulated using COMPAS.
 Animation is reflective of the radius, separation, percieved color etc of the stars. 
 
+ALL code related to temperature-color relationship is directly from the TULIPS code
+https://bitbucket.org/elaplace/tulips/src/master/
+https://ui.adsabs.harvard.edu/abs/2022A%26C....3800516L/abstract
+
 Code is run using the run.sh file. 
 Before doing so, update the data file input path in the preprocess.py file, it is currently set to a default example file provided with the code. 
 in terminal run 
