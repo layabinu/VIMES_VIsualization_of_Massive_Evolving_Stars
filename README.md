@@ -20,6 +20,7 @@ this is just an example, you have the options of log/linear or tulips/default
 and the animation will be created using pygame
 
 things required for this... still needs to be updated  but so far
+
 pip install numpy pygame pillow
 
 
