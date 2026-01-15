@@ -1,7 +1,10 @@
 
 
 
-https://github.com/user-attachments/assets/8f76f637-60b7-4662-b88c-0e58c94f19c6
+https://github.com/user-attachments/assets/30f19727-5089-44c6-8598-965a7b3220e3
+
+
+
 Log Default
 
 
@@ -38,7 +41,10 @@ pip install numpy pygame pillow
 
 
 
-https://github.com/user-attachments/assets/42940662-179b-461f-807a-38408b33354d
+https://github.com/user-attachments/assets/7c057ed1-494a-4d30-a08d-a19cd3588de0
+
+
+
 Linear Tulips
 
 
