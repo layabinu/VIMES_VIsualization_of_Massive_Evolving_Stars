@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/30f19727-5089-44c6-8598-965a7b3220e3
 Log Default
 
 
-# Stellar_evolution_animation
+# VIMES: VIsualization of Massive Evolving Stars
 Creates a stellar evolution animation for binary systems simulated using COMPAS.
 Animation is reflective of the radius, separation, percieved color etc of the stars. 
 
