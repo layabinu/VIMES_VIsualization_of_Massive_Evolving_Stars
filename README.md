@@ -33,6 +33,9 @@ then you can run
 this is just an example, you have the options of log/linear or tulips/default
 and the animation will be created using pygame
 
+if you want to save as an mp4 file, after log/linear and tulips/default, write the name of the mp4 file you want it saved to (ex: evolution.mp4)
+If you are running this through colab or do not want the pygame display window, you can also add in the word "headless" after the mp4 file name
+the full command would look something like "./run.sh linear default evolution.mp4 headless"
 
 
 things required for this... still needs to be updated  but so far
