@@ -10,6 +10,19 @@ test with more extremes
 -very very large radii
     - large diffe4renes in radii for both stars
 """
+#!/usr/bin/env python3
+
+import os
+import argparse
+
+# --- HEADLESS SDL SETUP (must be before pygame import) ---
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("--no-display", action="store_true")
+args, _ = parser.parse_known_args()
+
+if args.no_display:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+# --------------------------------------------------------
 
 import math
 from pathlib import Path
@@ -18,6 +31,7 @@ import pygame
 from pygame import gfxdraw
 from PIL import Image
 import argparse
+import imageio
 
 BASE_DIR = Path(__file__).parent
 STELLAR_IMG_DIR = BASE_DIR / "Images"
@@ -65,16 +79,36 @@ def make_antialiased_circle(radius_px, color):
     return surf
 
 class PygameAnimator:
-    def __init__(self, frames_file, image_dir=STELLAR_IMG_DIR, background_path=BACKGROUND_PATH, ce_path=CE_OVERLAY_PATH):
+    def __init__(
+        self,
+        frames_file,
+        image_dir=STELLAR_IMG_DIR,
+        background_path=BACKGROUND_PATH,
+        ce_path=CE_OVERLAY_PATH,
+        save_mp4=None,
+        no_display=False
+    ):
+        self.save_mp4 = save_mp4
+        self.no_display = no_display
         self.frames_file = Path(frames_file)
         self.image_dir = Path(image_dir)
         self.background_path = Path(background_path)
         self.ce_path = Path(ce_path)
         self.frames = []
         self.load_frames()
+        if self.no_display:
+            import os
+            os.environ["SDL_VIDEODRIVER"] = "dummy"
+
         pygame.init()
-        self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        pygame.display.set_caption("COMPAS Evolution Animation (pygame)")
+        pygame.display.set_mode((1, 1))
+
+        if self.no_display:
+            self.screen = pygame.Surface(SCREEN_SIZE)
+        else:
+            self.screen = pygame.display.set_mode(SCREEN_SIZE)
+            pygame.display.set_caption("COMPAS Evolution Animation (pygame)")
+
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 18)
         self.bold_font = pygame.font.SysFont("Arial", 18, bold=True)
@@ -109,6 +143,20 @@ class PygameAnimator:
 
         self.bh_birth_frame1 = None  # first frame where star1 becomes BH
         self.bh_birth_frame2 = None  # first frame where star2 becomes BH
+        
+        #TESTING VDIEO SAVING
+        self.video_writer = None
+        if self.save_mp4:
+            self.video_writer = imageio.get_writer(
+                self.save_mp4,
+                fps=FPS_PLAYBACK,
+                codec="libx264",
+                quality=5,  # lower = faster, larger file
+                ffmpeg_params=[
+                    "-preset", "ultrafast",
+                    "-pix_fmt", "yuv420p"
+                ]
+            )
 
         self.determine_scale()
 
@@ -513,12 +561,27 @@ class PygameAnimator:
                 if r in major_ticks:
                     label_surf = self.font.render(str(int(r)), True, (255,255,255))
                     self.screen.blit(label_surf, (x_tick - label_surf.get_width()//2, y_start + tick_height + 2))
-
-            pygame.display.flip()
+            
+            #TESTING VDIEO SAVBING
+            if self.video_writer:
+                frame = pygame.surfarray.array3d(self.screen)
+                frame = np.transpose(frame, (1, 0, 2)) 
+                self.video_writer.append_data(frame)
+            if not self.no_display:
+                pygame.display.flip()
 
             frame_idx += 1
-            if frame_idx >= n_frames:
-                frame_idx = 0  # loop
+            if self.no_display:
+                if frame_idx >= n_frames:
+                    running = False 
+            else:
+                if frame_idx >= n_frames:
+                    frame_idx = 0 
+                     # loop when displaying
+
+
+        if self.video_writer:
+            self.video_writer.close()
 
         pygame.quit()
 
@@ -538,6 +601,20 @@ def parse_cmd_arguments():
         "--images", 
         choices=["tulips", "default"], 
         help="The set of images to use (tulips or default)."
+    )
+
+
+    parser.add_argument(
+        "--save-mp4",
+        type=str,
+        default=None,
+        help="Save animation to MP4 file"
+    )
+
+    parser.add_argument(
+        "--no-display",
+        action="store_true",
+        help="Run headless (do not open a window)"
     )
 
     return parser.parse_args()
@@ -566,7 +643,11 @@ def main():
         USE_TULIPS_COLOR = False
 
     print(f"scaling {args.scaling}, images {args.images}")
-    animator = PygameAnimator(FRAMES_FILE)
+    animator = PygameAnimator(
+        FRAMES_FILE,
+        save_mp4=args.save_mp4,
+        no_display=args.no_display
+    )
     animator.run()
 
 
