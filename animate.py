@@ -10,7 +10,6 @@ test with more extremes
 -very very large radii
     - large diffe4renes in radii for both stars
 """
-#!/usr/bin/env python3
 
 import os
 import argparse
