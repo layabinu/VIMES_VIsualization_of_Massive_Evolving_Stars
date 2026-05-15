@@ -3,7 +3,7 @@ create the frames to be used in the animation
 takes each time step as an individual frame, samples a set number of frames for each 
 "stage" which is a unique combination of stellar stypes
 interpolate frames where there are larger jumps in any values
-also lots of mass trasfer stuff that should prob be checked later
+also lots of mass transfer stuff that should prob be checked later
 
 to do:
 add preprocessing from a csv (startrack)
@@ -40,10 +40,9 @@ def getStellarTypes():
 
 
 def load_hdf5_and_mask(path):
-    f = h5.File(str(path), "r")
-    mask = f["Record_Type"][()] == 4
-    Data = {k: f[k][()][mask] for k in f.keys()}
-    f.close()
+    with h5.File(str(path), "r") as f:
+        mask = f["Record_Type"][()] == 4
+        Data = {k: f[k][()][mask] for k in f.keys()}
     return Data
 
 #helper functions
