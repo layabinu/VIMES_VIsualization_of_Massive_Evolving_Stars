@@ -1,8 +1,9 @@
-import numpy as np
-import h5py as h5
 from pathlib import Path
+
+import h5py as h5
+import numpy as np
 from tulips.blackbody import blackbody_color
-from tulips.colormodels import irgb_from_xyz
+from tulips.colormodels import irgb_color, irgb_from_xyz
 
 # ------------------------------
 # Paths
@@ -11,6 +12,7 @@ BASE_DIR = Path(__file__).parent
 FRAMES_NPZ = BASE_DIR / "frames_data.npz"
 HDF5_PATH = BASE_DIR / "BSE_Detailed_Output_3.h5"
 OUTPUT_NPZ = BASE_DIR / "frames_data.npz"
+
 
 # ------------------------------
 # Load HDF5 temperature data
@@ -26,6 +28,7 @@ def load_hdf5_temperatures(path):
 
     f.close()
     return time, teff1, teff2
+
 
 # ------------------------------
 # Interpolation helper
@@ -44,11 +47,12 @@ def interp_from_hdf5(frame_time, hdf5_time, values):
     if hdf5_time[i] == frame_time:
         return float(values[i])
 
-    t0, t1 = hdf5_time[i-1], hdf5_time[i]
-    v0, v1 = values[i-1], values[i]
+    t0, t1 = hdf5_time[i - 1], hdf5_time[i]
+    v0, v1 = values[i - 1], values[i]
 
     alpha = (frame_time - t0) / (t1 - t0)
     return (1 - alpha) * v0 + alpha * v1
+
 
 # ------------------------------
 # Temperature → displayable irgb
@@ -72,10 +76,13 @@ def temperature_to_rgb(T_K):
 
     return irgb
 
+
 # ------------------------------
 # Main augmentation
 # ------------------------------
-def add_temperatures_and_rgb(hdf5_file=HDF5_PATH, frames_file=FRAMES_NPZ, output_frames_file=OUTPUT_NPZ):
+def add_temperatures_and_rgb(
+    hdf5_file=HDF5_PATH, frames_file=FRAMES_NPZ, output_frames_file=OUTPUT_NPZ
+):
     print("Loading frames...")
     frames = np.load(frames_file, allow_pickle=True)["frames"].tolist()
 
@@ -100,11 +107,9 @@ def add_temperatures_and_rgb(hdf5_file=HDF5_PATH, frames_file=FRAMES_NPZ, output
 
     print("Done.")
 
+
 # ------------------------------
 # Entry point
 # ------------------------------
 if __name__ == "__main__":
     add_temperatures_and_rgb()
-
-
-

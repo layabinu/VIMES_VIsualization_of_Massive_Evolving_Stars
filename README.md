@@ -51,6 +51,24 @@ This also comes with several optional inputs:
  - `--save-mp4` saves the movie at the specified path.
  - `--no-display` stops the animation from being displayed (usually only useful if the animation is also being saved as mp4).
 
+## Code Quality and Testing
+
+If you are developing this project, please run code quality checks before committing to the repository:
+
+```bash
+# Format code with Ruff
+uv run ruff format src/
+
+# Lint code with Ruff (you can remove the --fix flag to stop it automatically fixing the issues)
+uv run ruff check --fix src/
+```
+
+It is also recommended to run tests before committing to the repository:
+
+```bash
+# Pytest will automatically detect tests in files that looke like test_*.py
+uv run pytest
+```
 
 
 https://github.com/user-attachments/assets/7c057ed1-494a-4d30-a08d-a19cd3588de0
@@ -59,24 +77,22 @@ https://github.com/user-attachments/assets/7c057ed1-494a-4d30-a08d-a19cd3588de0
 
 Linear Tulips
 
-## Akcnowledgement:
+## Acknowledgement:
 VIMES was created by Laya Binu, please contact Laya for any questions.
 If you make use of VIMES, we ask you to cite the following Zenodo publication
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18503545.svg)](https://doi.org/10.5281/zenodo.18503545)
 
 
-@software{laya_binu_2026_18503545,
-  author       = {Laya Binu},
-  title        = {layabinu/VIMES\_VIsualization\_of\_Massive\_Evolving\_S
-                   tars: VIMES Stellar Evolution Visualization Code
-                  },
-  month        = feb,
-  year         = 2026,
-  publisher    = {Zenodo},
-  version      = {v0.1.0},
-  doi          = {10.5281/zenodo.18503545},
-  url          = {https://doi.org/10.5281/zenodo.18503545},
-}
+    @software{laya_binu_2026_18503545,
+        author       = {Laya Binu},
+        title        = {layabinu/VIMES\_VIsualization\_of\_Massive\_Evolving\_Stars: VIMES Stellar Evolution Visualization Code},
+        month        = feb,
+        year         = 2026,
+        publisher    = {Zenodo},
+        version      = {v0.1.0},
+        doi          = {10.5281/zenodo.18503545},
+        url          = {https://doi.org/10.5281/zenodo.18503545},
+    }
 
 
