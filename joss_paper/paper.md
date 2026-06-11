@@ -80,7 +80,7 @@ right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfe
 primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
 the final double compact object configuration. Stellar sizes and orbital separations are
 drawn to scale relative to one another within each panel. Colors in panels (a) and (b)
-reflect the surface temperatures in TULIPS mode. \label{fig:snapshots}](figures/vimes_snapshots.png)
+reflect the surface temperatures in TULIPS mode. \label{fig:snapshots}](vimes_snapshots.png)
 
 # Acknowledgements
 FSB 
