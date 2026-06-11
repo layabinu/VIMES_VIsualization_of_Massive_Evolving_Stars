@@ -88,7 +88,8 @@ the final double compact object configuration. (@laya need to update this, but f
 drawn to scale relative to one another within each panel. Colors of the stars in the panels reflect the effective surface temperatures using the TULIPS package.
 
 # Dependencies
-Matplotlib, TULIPS,... 
+Matplotlib, TULIPS,... (laya please check) 
+VIMES is written in Python and builds on several open-source scientific Python packages. Numerical data processing — including array manipulation, linear interpolation of intermediate frames, and storage of processed frame data in compressed .npz format — relies on NumPy [@Harris:2020]. Reading COMPAS detailed output files, which are stored in HDF5 format, is handled by h5py [@Collette:2023]. The animation rendering pipeline uses matplotlib [@Hunter:2007], specifically its FuncAnimation framework for assembling rendered frames into video files. The optional TULIPS color mode uses the temperature-to-color conversion utilities from the TULIPS package [@Laplace:2022]. Image assets used in the default cartoon rendering mode are loaded using Pillow [@Clark:2015].
 
 # Acknowledgements
 FSB 
