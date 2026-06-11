@@ -44,11 +44,16 @@ Rapid binary population synthesis codes enable large-scale simulations of these 
 
 # Statement of need
 
-Rapid population synthesis codes such as COMPAS [@Riley:2022, @TeamCompas:2025], COSMIC [@Breivik:2020], and SEVN [@Iorio:2023] are the primary tools for studying the evolution of binary stars and their formation pathways to exotic transients such as compact binary systems and their gravitational wave signatures. These codes produce data files containing numerical values for hundreds of physical quantities across thousands of timesteps. Although standard static diagrams:  HR diagrams, Kippenhahn diagrams, and binary cartoon figures are widely used to summarize the outcomes of such simulations, they are sometimes challenging to infer, are often hand-drawn schematic cartoons, and do often not capture the full continuous evolution of a binary system but instead illustrate only the key evolutionary phases of a binary in a static and qualitative way.
- Creating an accurate figure for a specific simulated binary is time-consuming, and often reqyures omitting the evolutionary transitions between phases that are often scientifically important. Recently, Tom Wagg created with cogsworth a tool to create such static cartoons in 2D, but an open-source tool that visualizes this in 3D and as a continuous evolution and that automates the creation of accurate, system-specific binary evolution from population synthesis code is still lacking .
+Rapid population synthesis codes such as COMPAS [@Riley:2022, @TeamCompas:2025], COSMIC [@Breivik:2020], and SEVN [@Iorio:2023] are the primary tools for studying the evolution of binary stars and their formation pathways to exotic transients such as compact binary systems and their gravitational wave signatures. These codes produce data files containing numerical values for hundreds of physical quantities across thousands of timesteps. However, the diversity of binary evolutionary channels poses a persistent challenge for both analysis and outreach of the population synthesis simulations.
+
+Although standard static diagrams:  HR diagrams, Kippenhahn diagrams, and binary cartoon figures are widely used to summarize and visualize the outcomes of population synthesis simulations, they are sometimes challenging to infer, they are often hand-drawn schematic cartoons, and they do often not capture the full continuous evolution of a binary system but instead illustrate only the key evolutionary phases of a binary in a static and qualitative way.
+ Creating an accurate figure for a specific simulated binary is time-consuming, and often reqyures omitting the evolutionary transitions between phases that are often scientifically important. Recently, [@2025ApJS..276...16W] created cogsworth which includes a pipeline to create static cartoons in 2D from population synthesis output, but an open-source tool that visualizes this in 3D,  as a continuous evolution, and that automates the creation of accurate, system-specific binary evolution from population synthesis code is still lacking.
+ 
 `VIMES` addresses this gap. It is designed for researchers who study binary stellar evolution and need a quick, accurate way to visualize the evolution of a specific simulated system — whether to build intuition during analysis or to communicate results in
 presentations and outreach. The animations produced are quantitatively accurate to the underlying simulation: all spatial scales, color temperatures, and evolutionary phases correspond directly to the data, rather than being schematic approximations.
-`VIMES` allows for any binary system evolved with COMPAS to be turned into an animation, with the user having a choice over the type of images used for the visualization, as well as the type of scaling used when converting the data into an animation. 
+`VIMES` allows for any binary system evolved with COMPAS or similar simulation codes to be turned into an animation, with the user having a choice over the type of images used for the visualization, as well as the type of scaling used when converting the data into an animation. 
+
+ In doing so, `VIMES`  broadens access to binary evolution codes for researchers building physical intuition, for educators introducing stellar astrophysics, and for the public engaging with the science behind gravitational-wave sources. As population synthesis simulations continue to grow in scale and complexity, tools like `VIMES` will play an increasingly important role in making their outputs comprehensible and their insights widely shareable.
 
 
 # Implementation 
@@ -85,6 +90,9 @@ The rendered frames are assembled into a video file using matplotlib's animation
 right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
 primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
 the final double compact object configuration. Stellar sizes and orbital separations are drawn to scale relative to one another within each panel. Colors of the stars in the top row of the panel are made using the TULIPS mode to reflect the effective surface temperatures, while the bottom row is made using the default cartoon images. Each column is a snapshot taken at the same evolutionary phase for the same system. \label{fig:snapshots}](vimes.png)
+
+
+Together, these features make VIMES a versatile tool for navigating the complex binary pathways that population synthesis simulations produce — rendering the full diversity of evolutionary outcomes accessible to researchers, students, and the public, and ensuring that the rich information encoded in binary evolution codes can be fully explored and communicated.
 
 
 # Dependencies
