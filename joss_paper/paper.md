@@ -81,6 +81,12 @@ primary star fills its Roche lobe, (c) the system following the first supernova,
 the final double compact object configuration. Stellar sizes and orbital separations are
 drawn to scale relative to one another within each panel. Colors in panels (a) and (b)
 reflect the surface temperatures in TULIPS mode. \label{fig:snapshots}](vimes_snapshots.png)
+Example snapshots from a VIMES animation of a massive binary system. From left to
+right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
+primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
+the final double compact object configuration. (@laya need to update this, but feel free to change the text) Stellar sizes and orbital separations are
+drawn to scale relative to one another within each panel. Colors in panels (a) and (b)
+reflect the surface temperatures in TULIPS mode.
 
 # Acknowledgements
 FSB 
