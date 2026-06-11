@@ -87,6 +87,9 @@ primary star fills its Roche lobe, (c) the system following the first supernova,
 the final double compact object configuration. (@laya need to update this, but feel free to change the text) Stellar sizes and orbital separations are
 drawn to scale relative to one another within each panel. Colors of the stars in the panels reflect the effective surface temperatures using the TULIPS package.
 
+# Dependencies
+Matplotlib, TULIPS,... 
+
 # Acknowledgements
 FSB 
 
