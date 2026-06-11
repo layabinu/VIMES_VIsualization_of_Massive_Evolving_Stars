@@ -5,6 +5,7 @@ tags:
   - astronomy
   - gravitational waves
   - binary evolution
+  - visualization
 authors:
   - name: Laya Binu
     affiliation: 1 # (Multiple affiliations must be quoted)
@@ -30,22 +31,59 @@ aas-journal: Astrophysical Journal Supplements
 
 # Summary
 
-Rapid stellar population synthesis codes are used in astronomy to simulate the evolution of binary systems, where, given initial parameters, the final product of the binary can be determined. When presenting research involving these simulations, VIMES allows the creation of an accurate animation of a binary system evolved with COMPAS, making it easily digestible to an audience. The animation uses data from any detailed output file to ensure the resulting animation is accurate in radius, separation, color, eccentricity, and evolutionary phase at any given point. 
+Binary stellar evolution describes the complex life of two gravitationally bound stars, whose initial conditions and binary interactions (including mass transfer and common-envelope episodes) ultimately determine the system's outcome and whether it produces specific systems such as compact object mergers detectable as gravitational waves. 
+Rapid binary population synthesis codes enable large-scale simulations of these systems, calculating detailed time-series data describing the evolving physical properties of each star and the binary properties. While indispensable for theoretical studies, these numerical outputs can be difficult to interpret intuitively or communicate to a general scientific audience.
+
+VIMES (VIsualization of Massive Evolving Stars) is a Python package that converts COMPAS detailed output files intoinsightful animations of binary stellar evolution. Each animation represents the accurate information for the evolving star;s radius, binary separationm color (effective temperature), eccentricity, and evolutionary phase at every timestep.   VIMES handles the full range of binary configurations produced by a population synthesis code such as COMPAS, and generates a 3D animation. By bridging the gap between raw simulation data and an intuitive visual representation, VIMES makes binary stellar evolution accessible for presentations, publications, and outreach.
+
 
 # Statement of need
 
-When presenting research involving rapid population synthesis codes, the output is provided as a data file with numerical values representing the evolution of the binary system, but it is difficult to translate into a visualization suitable for talks or presentations. Because each system can evolve very differently, premade visualizations are often not accurate for the exact system being studied. While Van Den Heuvel figures can be created for a given binary system, it does not fully capture the evolution of a binary system. The evolution between phases is just as important as the difference between the beginnings of two different phases, with an animation being the most effective way to ensure that no major details about the evolution is lost while being easily presentable to an audience. 
-This code allows for any binary system evolved with COMPAS to be turned into an animation, with the user having a choice over the type of images used for the visualization, as well as the type of scaling used when converting the data into an animation. 
+Rapid population synthesis codes such as COMPAS [@Riley:2022], COSMIC [@Breivik:2020], and SEVN [@Iorio:2023] are the primary tools for studying the evolution of binary stars and their formation pathways to exotic transients such as compact binary systems and their gravitational wave signatures. These codes produce data files containing numerical values for hundreds of physical quantities across thousands of timesteps. Although standard static diagrams:  HR diagrams, Kippenhahn diagrams, and binary cartoon figures are widely used to summarize the outcomes of such simulations, they are sometimes challenging to infer, are often hand-drawn schematic cartoons, and do often not capture the full continuous evolution of a binary system but instead illustrate only the key evolutionary phases of a binary in a static and qualitative way.
+ Creating an accurate figure for a specific simulated binary is time-consuming, and often reqyures omitting the evolutionary transitions between phases that are often scientifically important. Recently, Tom Wagg created with cogsworth a tool to create such static cartoons in 2D, but an open-source tool that visualizes this in 3D and as a continuous evolution and that automates the creation of accurate, system-specific binary evolution from population synthesis code is still lacking .
+VIMES addresses this gap. It is designed for researchers who study binary stellar evolution and need a quick, accurate way to visualize the evolution of a specific simulated system — whether to build intuition during analysis or to communicate results in
+presentations and outreach. The animations produced are quantitatively accurate to the underlying simulation: all spatial scales, color temperatures, and evolutionary phases correspond directly to the data, rather than being schematic approximations.
+VIMES allows for any binary system evolved with COMPAS to be turned into an animation, with the user having a choice over the type of images used for the visualization, as well as the type of scaling used when converting the data into an animation. 
 
-# Details
 
-VIMES creates an animation in two different steps. When a new binary system needs to be animated, as soon as the path to the detailed file is changed, VIMES will load all necessary data from the file, and process it to have a 1:1 correspondence with the timesteps/associated parameter, and the frames of the animation. 
-The data are first separated by "phase," which is determined by when the stellar type of either star in the binary changes, with mass transfer treated as an additional phase inserted later at the corresponding point in its evolution. The same number of timesteps or frames is sampled from each phase. If there is a large difference between two timesteps, either a large percentage or an absolute change in any values, then interpolated frames are added in between. This is done to ensure that the evolutionary phases that are usually more relevant are properly displayed, as having the number of frames per phase be reflective of the actual time spent in each phase, leading to excessively long main-sequence phases with nothing of note happening in the animation.
-The second part of the code takes the cleaned data, now saved as a .npz file, and creates an animation with each frame corresponding to one time step from the file. 
-The two options for how the stars look are "default" which uses cartoon-like images that change according to stellar-type, and "tulips" which uses the temperature to color conversion from the TULIPS code. The first option creates an animation with phase transitions that are clearer, and helpful for demonstrating any differences in evolutionary phase, while "tulips" allows for a more accurate animation that may not be as visually different, especially for higher mass systems.  
+# Implementation 
+VIMES processes detailed output files from population synthesis codes such as COMPAS and StarTrack in two stages: data ingestion and animation rendering.
+
+## Data Ingestion and Frame Construction
+VIMES reads the binary's evolution from a COMPAS HDF5 detailed output file, extracting time-series data for both stars and the orbit. The data are first segmented into
+evolutionary phases, defined by changes in the stellar type of either star (using the stellar type classification scheme of @Hurley:2000) or the onset of mass transfer. This
+phase structure is used to determine frame sampling: rather than allocating frames proportional to time spent in each phase (which would result in animations dominated
+by long, visually uneventful main-sequence phases), VIMES samples a fixed number of frames from each phase. This ensures that short but physically important phases — such
+as common-envelope episodes or supernova kicks — receive adequate representation in the animation.
+Where adjacent timesteps show large fractional or absolute changes in any displayed quantity, VIMES inserts linearly interpolated intermediate frames to ensure smooth visual transitions. The processed frames are cached as a compressed .npz file, decoupling data preparation from rendering and allowing the animation to be regenerated with different visual settings without re-reading the population synthesis output.
+
+
+## Animation Rendering
+The second stage reads the cached frame data and renders each frame as a two-dimensional representation of the binary system, with the two stars drawn at their correct relative sizes (proportional to stellar radius) and the correct orbital separation and eccentricity.
+The orbit is drawn as an ellipse with the correct eccentricity, and the positions of the stars along the orbit are updated frame by frame. VIMES supports two visual modes:
+
+ - Default mode
+renders stars using a set of cartoon-style images that change
+discretely with stellar type, making phase transitions immediately legible to an
+audience unfamiliar with the underlying data conventions.
+ - TULIPS mode
+maps the effective surface temperature of each star to a
+physically motivated RGB color using the temperature-to-color conversion from
+the TULIPS package [@Laplace:2022], producing a more quantitatively accurate
+visual at the cost of reduced contrast between evolutionary phases.
+
+The rendered frames are assembled into a video file using matplotlib's animation framework [@Hunter:2007]. Figure 1 shows example snapshots from an animation of a double compact object progenitor system at four key evolutionary phases.
+
+
+![Example snapshots from a VIMES animation of a massive binary system. From left to
+right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
+primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
+the final double compact object configuration. Stellar sizes and orbital separations are
+drawn to scale relative to one another within each panel. Colors in panels (a) and (b)
+reflect the surface temperatures in TULIPS mode. \label{fig:snapshots}](figures/vimes_snapshots.png)
 
 # Acknowledgements
-
+FSB 
 
 
 # References
