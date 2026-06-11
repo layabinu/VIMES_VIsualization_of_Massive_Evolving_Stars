@@ -52,10 +52,10 @@ presentations and outreach. The animations produced are quantitatively accurate 
 
 
 # Implementation 
-`VIMES` processes detailed output files from population synthesis codes such as COMPAS and StarTrack in two stages: data ingestion and animation rendering.
+`VIMES` processes detailed output files from population synthesis codes such as COMPAS in two stages: data ingestion and animation rendering.
 
 ## Data Ingestion and Frame Construction
-`VIMES` reads the binary's evolution from a COMPAS HDF5 detailed output file, extracting time-series data for both stars and the orbit. The data are first segmented into
+`VIMES` reads the binary's evolution details (such as radius, effective temparature, mass, stellar type, mass transfer episodes, and time) from a COMPAS HDF5 detailed output file, extracting time-series data for both stars and the orbit. The data are first segmented into
 evolutionary phases, defined by changes in the stellar type of either star (using the stellar type classification scheme of @Hurley:2000) or the onset of mass transfer. This
 phase structure is used to determine frame sampling: rather than allocating frames proportional to time spent in each phase (which would result in animations dominated
 by long, visually uneventful main-sequence phases), `VIMES` samples a fixed number of frames from each phase. This ensures that short but physically important phases — such
@@ -77,20 +77,15 @@ physically motivated RGB color using the temperature-to-color conversion from
 the TULIPS package [@Laplace:2022], producing a more quantitatively accurate
 visual at the cost of reduced contrast between evolutionary phases.
 
-The rendered frames are assembled into a video file using matplotlib's animation framework [@Hunter:2007]. Figure 1 shows example snapshots from an animation of a double compact object progenitor system at four key evolutionary phases.
+The rendered frames are assembled into a video file using matplotlib's animation framework [@Hunter:2007]. Figure \autoref{fig:snapshots} shows example snapshots from an animation of a double compact object progenitor system at four key evolutionary phases. VIMES works for COMPAS output but can easily be run to other population synthesis simulation outputs by changing the datafile to a similar datastructure or pointing VIMES to the required parameters. 
 
 
 
 ![Example snapshots from a VIMES animation of a massive binary system. From left to
 right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
 primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
-the final double compact object configuration. Stellar sizes and orbital separations are
-drawn to scale relative to one another within each panel. Colors in the top row of panels
-reflect the surface temperatures in TULIPS mode, while the bottom row uses cartoon style images. \label{fig:snapshots}](vimes.png)
-Figure 1: Example snapshots from a VIMES animation of a massive binary system. From left to
-right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
-primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
-the final double compact object configuration. Stellar sizes and orbital separations are drawn to scale relative to one another within each panel. Colors of the stars in the top row of the panel are made using the TULIPS mode to reflect the effective surface temperatures, while the bottom row is made using the default cartoon images. Each column is a snapshot taken at the same evolutionary phase for the same system. 
+the final double compact object configuration. Stellar sizes and orbital separations are drawn to scale relative to one another within each panel. Colors of the stars in the top row of the panel are made using the TULIPS mode to reflect the effective surface temperatures, while the bottom row is made using the default cartoon images. Each column is a snapshot taken at the same evolutionary phase for the same system. \label{fig:snapshots}](vimes.png)
+
 
 # Dependencies
 TULIPS, PyGame, ImageIO, and Pillow. 
