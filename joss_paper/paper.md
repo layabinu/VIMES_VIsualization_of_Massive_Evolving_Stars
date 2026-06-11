@@ -75,20 +75,20 @@ visual at the cost of reduced contrast between evolutionary phases.
 The rendered frames are assembled into a video file using matplotlib's animation framework [@Hunter:2007]. Figure 1 shows example snapshots from an animation of a double compact object progenitor system at four key evolutionary phases.
 
 
+
 ![Example snapshots from a VIMES animation of a massive binary system. From left to
 right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
 primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
 the final double compact object configuration. Stellar sizes and orbital separations are
-drawn to scale relative to one another within each panel. Colors in panels (a) and (b)
-reflect the surface temperatures in TULIPS mode. \label{fig:snapshots}](vimes_snapshots.png)
-![\label{fig:snapshots}](vimes.png)
+drawn to scale relative to one another within each panel. Colors in the top row of panels
+reflect the surface temperatures in TULIPS mode, while the bottom row uses cartoon style images. \label{fig:snapshots}](vimes.png)
 Figure 1: Example snapshots from a VIMES animation of a massive binary system. From left to
 right: (a) the initial main-sequence phase, (b) the onset of Case-B mass transfer as the
 primary star fills its Roche lobe, (c) the system following the first supernova, and (d)
-the final double compact object configuration. (@laya need to update this, but feel free to change the text) Stellar sizes and orbital separations are drawn to scale relative to one another within each panel. Colors of the stars in the top row of the panel are made using the TULIPS mode to reflect the effective surface temperatures, while the bottom row is made using the default cartoon images. Each column is a snapshot taken at the same evolutionary phase for the same system. 
+the final double compact object configuration. Stellar sizes and orbital separations are drawn to scale relative to one another within each panel. Colors of the stars in the top row of the panel are made using the TULIPS mode to reflect the effective surface temperatures, while the bottom row is made using the default cartoon images. Each column is a snapshot taken at the same evolutionary phase for the same system. 
 
 # Dependencies
-TULIPS, PyGame, ImageIO, and Pillow
+TULIPS, PyGame, ImageIO, and Pillow. 
 VIMES is written in Python and builds on several open-source scientific Python packages. Numerical data processing — including array manipulation, linear interpolation of intermediate frames, and storage of processed frame data in compressed .npz format — relies on NumPy [@Harris:2020]. Reading COMPAS detailed output files, which are stored in HDF5 format, is handled by h5py [@Collette:2023]. The animation rendering pipeline uses PyGame to render frames and merge them into an MP4 file. [@Shinners:2025] The optional TULIPS color mode uses the temperature-to-color conversion utilities from the TULIPS package [@Laplace:2022]. Image assets used in the default cartoon rendering mode are loaded using Pillow [@Clark:2015].
 
 # Acknowledgements
