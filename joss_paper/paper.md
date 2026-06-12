@@ -43,20 +43,23 @@ Rapid binary population synthesis codes enable large-scale simulations of these 
 
 
 # Statement of need
-
 Rapid population synthesis codes such as COMPAS [@Riley:2022, @TeamCompas:2025], COSMIC [@Breivik:2020], and SEVN [@Iorio:2023] are the primary tools for studying the evolution of binary stars and their formation pathways to exotic transients such as compact binary systems and their gravitational wave signatures [@Mandel:2022]. These codes produce data files containing numerical values for hundreds of physical quantities across thousands of timesteps. However, the diversity of binary evolutionary channels poses a persistent challenge for both analysis and outreach of the population synthesis simulations.
 
 Although standard static diagrams:  HR diagrams, Kippenhahn diagrams, and binary cartoon figures are widely used to summarize and visualize the outcomes of population synthesis simulations, they are sometimes challenging to infer, they are often hand-drawn schematic cartoons, and they do often not capture the full continuous evolution of a binary system but instead illustrate only the key evolutionary phases of a binary in a static and qualitative way.
- Creating an accurate figure for a specific simulated binary is time-consuming, and often reqyures omitting the evolutionary transitions between phases that are often scientifically important. Recently, [@2025ApJS..276...16W] created cogsworth which includes a pipeline to create static cartoons in 2D from population synthesis output, but an open-source tool that visualizes this in 3D,  as a continuous evolution, and that automates the creation of accurate, system-specific binary evolution from population synthesis code is still lacking.
- 
+
 `VIMES` addresses this gap. It is designed for researchers who study binary stellar evolution and need a quick, accurate way to visualize the evolution of a specific simulated system — whether to build intuition during analysis or to communicate results in
 presentations and outreach. The animations produced are quantitatively accurate to the underlying simulation: all spatial scales, color temperatures, and evolutionary phases correspond directly to the data, rather than being schematic approximations.
 `VIMES` allows for any binary system evolved with COMPAS or similar simulation codes to be turned into an animation, with the user having a choice over the type of images used for the visualization, as well as the type of scaling used when converting the data into an animation. 
 
  In doing so, `VIMES`  broadens access to binary evolution codes for researchers building physical intuition, for educators introducing stellar astrophysics, and for the public engaging with the science behind gravitational-wave sources. As population synthesis simulations continue to grow in scale and complexity, tools like `VIMES` will play an increasingly important role in making their outputs comprehensible and their insights widely shareable.
 
+# State of the field
 
-# Implementation 
+ Creating an accurate figure for a specific simulated binary is time-consuming and often requires omitting the evolutionary transitions between phases that are often scientifically important. Recently, [@2025ApJS..276...16W] created cogsworth which includes a pipeline to create static cartoons in 2D from population synthesis output, but an open-source tool that visualizes this as a continuous evolution, and that automates the creation of accurate, system-specific binary evolution from population synthesis code is still lacking. 
+
+ `VIMES` was created to ensure that an effective way to visualize continuous evolution is possible while remaining accurate to the specific systems being simulated, rather than a generalized one.  
+ 
+# Software Design 
 `VIMES` processes detailed output files from population synthesis codes such as COMPAS in two stages: data ingestion and animation rendering.
 
 ## Data Ingestion and Frame Construction
@@ -94,10 +97,17 @@ the final double compact object configuration. Stellar sizes and orbital separat
 
 Together, these features make VIMES a versatile tool for navigating the complex binary pathways that population synthesis simulations produce — rendering the full diversity of evolutionary outcomes accessible to researchers, students, and the public, and ensuring that the rich information encoded in binary evolution codes can be fully explored and communicated.
 
+# Research Impact Statement
+
+GWLandscape is a website that allows users to generate binary systems using COMPAS without needing to download or run any software, while also allowing customization of the initial conditions. `VIMES` is currently being integrated into the output generation as an option to create an animation of the system that the user has created. 
 
 # Dependencies
 TULIPS, PyGame, ImageIO, and Pillow. 
 VIMES is written in Python and builds on several open-source scientific Python packages. Numerical data processing — including array manipulation, linear interpolation of intermediate frames, and storage of processed frame data in compressed .npz format — relies on NumPy [@Harris:2020]. Reading COMPAS detailed output files, which are stored in HDF5 format, is handled by h5py [@Collette:2023]. The animation rendering pipeline uses PyGame to render frames and merge them into an MP4 file. [@Shinners:2025] The optional TULIPS color mode uses the temperature-to-color conversion utilities from the TULIPS package [@Laplace:2022]. Image assets used in the default cartoon rendering mode are loaded using Pillow [@Clark:2015].
+
+# AI usage disclosure
+
+Generative AI was used in a limited role to help with debugging during the initial stages of this software. No generative AI was used in the creation or proofreading of this manuscript. All AI-suggested edits to the code were reviewed and confirmed by the authors, and all software design decisions and implementations were made by the authors. The AI tool used for this assistance was GitHub Copilot through VSCode. 
 
 # Acknowledgements
 The authors would like to thank all the members of the UCSD Gravitational-Wave Paleontology Lab for their constructive feedback and help with this project. We would like to thank the UCSD URS program for their support and for sponsoring this summer research project. 
