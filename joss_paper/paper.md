@@ -8,7 +8,7 @@ tags:
   - visualization
 authors:
   - name: Laya Binu
-  - orcid:
+  - orcid: 0009-0009-5823-4399
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Floor S. Broekgaarden
   - orcid: 0000-0002-4421-4962
@@ -100,7 +100,7 @@ TULIPS, PyGame, ImageIO, and Pillow.
 VIMES is written in Python and builds on several open-source scientific Python packages. Numerical data processing — including array manipulation, linear interpolation of intermediate frames, and storage of processed frame data in compressed .npz format — relies on NumPy [@Harris:2020]. Reading COMPAS detailed output files, which are stored in HDF5 format, is handled by h5py [@Collette:2023]. The animation rendering pipeline uses PyGame to render frames and merge them into an MP4 file. [@Shinners:2025] The optional TULIPS color mode uses the temperature-to-color conversion utilities from the TULIPS package [@Laplace:2022]. Image assets used in the default cartoon rendering mode are loaded using Pillow [@Clark:2015].
 
 # Acknowledgements
-The authors would like to thank all the members of the UCSD Gravitational-Wave Paleontology Lab for their constructive feedback and help with this project. We like to thank the UCSD URS program for their support and sponsoring this summer research project. 
+The authors would like to thank all the members of the UCSD Gravitational-Wave Paleontology Lab for their constructive feedback and help with this project. We would like to thank the UCSD URS program for their support and for sponsoring this summer research project. 
 
 
 # References
