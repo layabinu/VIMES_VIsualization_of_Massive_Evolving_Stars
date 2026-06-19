@@ -16,6 +16,9 @@ authors:
   - name: Amedeo Romagnolo
   - orcid: 0000-0001-9583-4339
     affiliation: "2, 3"
+  - name: Thomas Reichardt
+  - orcid: 0000-0003-4630-3384
+    affiliation: 4
 
 affiliations:
  - name: Department of Astronomy and Astrophysics, University of California San Diego, 9500 Gilman Drive, La Jolla, CA 92093, USA
@@ -24,6 +27,8 @@ affiliations:
    index: 2
  - name: Dipartimento di Fisica e Astronomia Galileo Galilei, Università di Padova, Vicolo dell’Osservatorio 3, I–35122 Padova, Italy
    index: 3
+ - name: Astronomy Data and Computing Services (ADACS); the Centre for Astrophysics & Supercomputing, Swinburne University of Technology, P.O. Box 218, Hawthorn, VIC 3122, Australia
+   index: 4
 
 date: 12 June 2026
 bibliography: paper.bib
