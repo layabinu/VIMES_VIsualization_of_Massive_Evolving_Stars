@@ -342,7 +342,13 @@ class PygameAnimator:
                 if f["stypeName2"] in ("BH", "NS", "WD"):
                     surf2 = self.get_star_surface(f["stypeName2"], f["Radius(2)"])
 
-            if "mass transfer" in f.get("eventString", "").lower() and self.mt_img:
+            event_str = f.get("eventString", "").lower()
+            
+            if "common envelope" in event_str and self.ce_img:
+                # Display CE image scaled to fill the entire screen
+                ce_scaled = pygame.transform.smoothscale(self.ce_img, SCREEN_SIZE)
+                self.screen.blit(ce_scaled, (0, 0))
+            elif "mass transfer" in event_str and self.mt_img:
                 dx = sx2 - sx1
                 dy = sy2 - sy1
                 dist = math.hypot(dx, dy)
@@ -583,11 +589,50 @@ class PygameAnimator:
                             minor_ticks.append(tick)
 
                 scale_bar_ticks = sorted(set(major_ticks + minor_ticks))
-
                 scale_bar_length_rsun = major_ticks[-1]
 
+                scale_px = self.scaled_radius(scale_bar_length_rsun) * self.scale
+
+                margin = 40
+                x_start = SCREEN_SIZE[0] // 2 - scale_px // 2
+                y_start = SCREEN_SIZE[1] - margin
+                label_surf = self.font.render(
+                    "Distance Scaling in Solar Radii", True, (255, 255, 255)
+                )
+                self.screen.blit(
+                    label_surf,
+                    (SCREEN_SIZE[0] // 2 - label_surf.get_width() // 2, y_start - 25),
+                )
+
+                pygame.draw.line(
+                    self.screen,
+                    (255, 255, 255),
+                    (x_start, y_start),
+                    (x_start + scale_px, y_start),
+                    2,
+                )
+
+                for r in scale_bar_ticks:
+                    x_tick = x_start + self.scaled_radius(r) * self.scale
+                    tick_height = 6
+                    pygame.draw.line(
+                        self.screen,
+                        (255, 255, 255),
+                        (x_tick, y_start - tick_height // 2),
+                        (x_tick, y_start + tick_height // 2),
+                        2,
+                    )
+                    if r in major_ticks:
+                        label_surf = self.font.render(str(int(r)), True, (255, 255, 255))
+                        self.screen.blit(
+                            label_surf,
+                            (
+                                x_tick - label_surf.get_width() // 2,
+                                y_start + tick_height + 2,
+                            ),
+                        )
+
             else:
-                # linear scaling
                 scale_bar_length_rsun = 1000.0
                 tick_interval_rsun = 100
                 scale_bar_ticks = list(
@@ -595,46 +640,45 @@ class PygameAnimator:
                 )
                 major_ticks = scale_bar_ticks[::2]
 
-            scale_px = self.scaled_radius(scale_bar_length_rsun) * self.scale
+                bar_width_px = 280
+                x_start = SCREEN_SIZE[0] // 2 - bar_width_px // 2
+                y_start = SCREEN_SIZE[1] - 40
 
-            margin = 40
-            x_start = SCREEN_SIZE[0] // 2 - scale_px // 2
-            y_start = SCREEN_SIZE[1] - margin
-            label_surf = self.font.render(
-                "Distance Scaling in Solar Radii", True, (255, 255, 255)
-            )
-            self.screen.blit(
-                label_surf,
-                (SCREEN_SIZE[0] // 2 - label_surf.get_width() // 2, y_start - 25),
-            )
+                label_surf = self.font.render(
+                    "Distance Scaling in Solar Radii", True, (255, 255, 255)
+                )
+                self.screen.blit(
+                    label_surf,
+                    (SCREEN_SIZE[0] // 2 - label_surf.get_width() // 2, y_start - 25),
+                )
 
-            pygame.draw.line(
-                self.screen,
-                (255, 255, 255),
-                (x_start, y_start),
-                (x_start + scale_px, y_start),
-                2,
-            )
-
-            for r in scale_bar_ticks:
-                x_tick = x_start + self.scaled_radius(r) * self.scale
-                tick_height = 6
                 pygame.draw.line(
                     self.screen,
                     (255, 255, 255),
-                    (x_tick, y_start - tick_height // 2),
-                    (x_tick, y_start + tick_height // 2),
+                    (x_start, y_start),
+                    (x_start + bar_width_px, y_start),
                     2,
                 )
-                if r in major_ticks:
-                    label_surf = self.font.render(str(int(r)), True, (255, 255, 255))
-                    self.screen.blit(
-                        label_surf,
-                        (
-                            x_tick - label_surf.get_width() // 2,
-                            y_start + tick_height + 2,
-                        ),
+
+                for r in scale_bar_ticks:
+                    x_tick = x_start + (r / scale_bar_length_rsun) * bar_width_px
+                    tick_height = 6
+                    pygame.draw.line(
+                        self.screen,
+                        (255, 255, 255),
+                        (x_tick, y_start - tick_height // 2),
+                        (x_tick, y_start + tick_height // 2),
+                        2,
                     )
+                    if r in major_ticks:
+                        label_surf = self.font.render(str(int(r)), True, (255, 255, 255))
+                        self.screen.blit(
+                            label_surf,
+                            (
+                                x_tick - label_surf.get_width() // 2,
+                                y_start + tick_height + 2,
+                            ),
+                        )
 
             # TESTING VDIEO SAVBING
             if self.video_writer:

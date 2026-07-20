@@ -34,10 +34,10 @@ case "$IMAGES" in
         ;;
 esac
 
-FRAMES="/Users/ronin/animation/Final Animation/frames_data.npz"
-PREPROCESS="/Users/ronin/animation/Final Animation/preprocess.py"
-ANIMATE="/Users/ronin/animation/Final Animation/animate.py"
-COLOR="/Users/ronin/animation/Final Animation/temp_to_color.py"
+FRAMES="src/vimes/frames_data.npz"
+PREPROCESS="src/vimes/preprocess.py"
+ANIMATE="src/vimes/animate.py"
+COLOR="src/vimes/temp_to_color.py"
 
 # Preprocess if needed
 if [ ! -f "$FRAMES" ]; then

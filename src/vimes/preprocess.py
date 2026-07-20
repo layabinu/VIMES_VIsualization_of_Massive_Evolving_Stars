@@ -19,7 +19,7 @@ import h5py as h5
 import numpy as np
 
 BASE_DIR = Path(__file__).parent
-HDF5_PATH = BASE_DIR / "BSE_Detailed_Output_3.h5"
+HDF5_PATH = '/Users/ronin/animation/Final Animation/examples/BSE_Detailed_Output_4.h5'
 OUTPUT_FRAMES_FILE = BASE_DIR / "frames_data.npz"
 
 FRAMES_PER_PHASE = 100
@@ -58,7 +58,11 @@ def get_stellar_types():
 
 def load_hdf5_and_mask(path):
     f = h5.File(str(path), "r")
-    mask = f["Record_Type"][()] == 4
+    record_type = f["Record_Type"][()]
+    mt_timescale = f["MassTransferTimescale"][()]
+    
+    mask = (record_type == 4) | (mt_timescale == 3)
+    
     Data = {key: val[()][mask] for key, val in f.items()}
     f.close()
     return Data
@@ -81,14 +85,6 @@ def detect_phases_indices(stellar_type_1, stellar_type_2):
             start = i
     phases.append((start, n - 1))
     return phases
-
-
-def detect_mt_starts(mt):
-    starts = set()
-    for i in range(1, len(mt)):
-        if mt[i - 1] == 0 and mt[i] > 0:
-            starts.add(i)
-    return starts
 
 
 def sample_indices(start, end, n):
@@ -130,7 +126,6 @@ def preprocess_to_frames(hdf5_path, out_path):
     Data = load_hdf5_and_mask(hdf5_path)
     type_map = get_stellar_types()
     phases = detect_phases_indices(Data["Stellar_Type(1)"], Data["Stellar_Type(2)"])
-    mt_starts = detect_mt_starts(Data["MT_History"].astype(int))
 
     frames = []
 
@@ -191,9 +186,8 @@ def preprocess_to_frames(hdf5_path, out_path):
 
         enhanced.append(sampled[-1])
 
-        # mass transfer
         mt_frames = []
-        last_mt_frame = -999  # track the last MT frame added
+        last_mt_frame = -999 
 
         for i, f in enumerate(enhanced):
             mt_frames.append(f)
@@ -202,14 +196,18 @@ def preprocess_to_frames(hdf5_path, out_path):
                 round(start + (end - start) * (i / max(1, len(enhanced) - 1)))
             )
 
-            if data_idx in mt_starts:
-                # Skip if previous MT was too close
+            is_ce_event = (
+                data_idx < len(Data["MassTransferTimescale"])
+                and int(Data["MassTransferTimescale"][data_idx]) == 3
+            )
+
+            if is_ce_event:
                 if i - last_mt_frame < 25:
                     continue
 
                 for _ in range(MT_PADDING_FRAMES):
                     g = f.copy()
-                    g["eventString"] = "Mass Transfer"
+                    g["eventString"] = "Common Envelope"
                     mt_frames.append(g)
 
                 last_mt_frame = i
