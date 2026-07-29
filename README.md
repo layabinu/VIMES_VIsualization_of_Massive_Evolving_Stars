@@ -16,6 +16,14 @@ The code works in two steps: a preprocessing stage that maps the simulation data
 
 ## Installation
 
+> **Note on Python versions:** some users have run into an error while building `pygame` when installing VIMES on **Python 3.14**, which is still new and has some package compatibility issues. If you hit this, the recommended fix is to create your environment with **Python 3.13** (e.g. 3.13.14) instead, which works without problems:
+>
+>     uv tool install --python 3.13 git+https://github.com/layabinu/VIMES_VIsualization_of_Massive_Evolving_Stars.git
+>
+> or, with pip:
+>
+>     python3.13 -m venv venv
+
 ### Using uv (recommended)
 This project is managed by [uv](https://docs.astral.sh/uv/), so the best way to install it is also using uv (follow [install instructions for uv](https://docs.astral.sh/uv/getting-started/installation/) if you don't have it):
 
