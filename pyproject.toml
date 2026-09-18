@@ -23,7 +23,9 @@ dependencies = [
     # https://numpy.org/doc/stable/release/2.3.2-notes.html
     "numpy>=2.3.2",
     "pillow>=12.2.0",
-    "pygame>=2.6.1",
+    # 2.5.5 is the earlist version with Python 3.14 support
+    # https://github.com/pygame-community/pygame-ce/releases/tag/2.5.5
+    "pygame-ce>=2.5.5",
 ]
 
 [project.scripts]
