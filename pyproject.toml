@@ -106,7 +106,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "pyinstrument>=5.1.2",
-    "pytest>=9.0.3",
-    "ruff>=0.15.14",
+    "pyinstrument==5.1.2",
+    "pytest==9.0.3",
+    "ruff==0.15.14",
 ]
