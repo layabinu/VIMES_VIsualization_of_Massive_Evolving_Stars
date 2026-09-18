@@ -1,16 +1,13 @@
 import math
 
 import numpy as np
-import pytest
 
 from vimes.preprocess import (
+    detect_large_jump,
+    detect_mt_starts,
+    detect_phases_indices,
     get_stellar_types,
     interp,
-    detect_large_jump,
-    detect_phases_indices,
-    detect_mt_starts,
-    make_event_string,
-    sample_indices,
 )
 
 
