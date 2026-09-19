@@ -9,8 +9,9 @@ from tulips.colormodels import irgb_color, irgb_from_xyz
 # Paths
 # ------------------------------
 BASE_DIR = Path(__file__).parent
+EXAMPLES_DIR = BASE_DIR.parents[1] / "examples"
 FRAMES_NPZ = BASE_DIR / "frames_data.npz"
-HDF5_PATH = BASE_DIR / "BSE_Detailed_Output_3.h5"
+HDF5_PATH = EXAMPLES_DIR / "BSE_Detailed_Output_0.h5"
 OUTPUT_NPZ = BASE_DIR / "frames_data.npz"
 
 

@@ -2,6 +2,10 @@
 
 usage() {
     echo "Usage: $0 <log|linear> <tulips|default> [output.mp4] [headless]"
+    echo ""
+    echo "Environment:"
+    echo "  HDF5   input simulation file (default: examples/BSE_Detailed_Output_0.h5)"
+    echo "  FRAMES preprocessed frames file (default: frames_data.npz)"
     exit 1
 }
 
@@ -34,22 +38,21 @@ case "$IMAGES" in
         ;;
 esac
 
-FRAMES="src/vimes/frames_data.npz"
-PREPROCESS="src/vimes/preprocess.py"
-ANIMATE="src/vimes/animate.py"
-COLOR="src/vimes/temp_to_color.py"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+HDF5="${HDF5:-$REPO_DIR/examples/BSE_Detailed_Output_0.h5}"
+FRAMES="${FRAMES:-frames_data.npz}"
 
 # Preprocess if needed
 if [ ! -f "$FRAMES" ]; then
-    echo "frames_data.npz not found. Running preprocess..."
-    python3 "$PREPROCESS"
-    python3 "$COLOR"
+    echo "$FRAMES not found. Running preprocess on $HDF5..."
+    vimes-preprocess "$HDF5" "$FRAMES" || exit 1
 else
-    echo "frames_data.npz found. Skipping preprocess."
+    echo "$FRAMES found. Skipping preprocess."
 fi
 
 # Build animation command
-CMD=(python3 "$ANIMATE" --scaling "$SCALING" --images "$IMAGES")
+CMD=(vimes "$FRAMES" --scaling "$SCALING" --images "$IMAGES")
 
 if [ -n "$MP4_OUT" ]; then
     CMD+=(--save-mp4 "$MP4_OUT")
@@ -59,7 +62,7 @@ if [ "$HEADLESS" = "headless" ]; then
     CMD+=(--no-display)
 fi
 
-echo "Running animate.py:"
+echo "Running vimes:"
 echo "${CMD[@]}"
 
 "${CMD[@]}"

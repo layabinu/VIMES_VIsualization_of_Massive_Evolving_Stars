@@ -19,7 +19,8 @@ import h5py as h5
 import numpy as np
 
 BASE_DIR = Path(__file__).parent
-HDF5_PATH = "/Users/ronin/animation/Final Animation/examples/BSE_Detailed_Output_4.h5"
+EXAMPLES_DIR = BASE_DIR.parents[1] / "examples"
+HDF5_PATH = EXAMPLES_DIR / "BSE_Detailed_Output_0.h5"
 OUTPUT_FRAMES_FILE = BASE_DIR / "frames_data.npz"
 
 FRAMES_PER_PHASE = 100
