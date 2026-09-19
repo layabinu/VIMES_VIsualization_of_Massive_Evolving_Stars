@@ -91,12 +91,11 @@ If you make use of VIMES, we ask you to cite the following Zenodo publication
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20500022.svg)](https://doi.org/10.5281/zenodo.20500022)
 
+```
 @software{laya_binu_2026_20500022,
   author       = {Laya Binu and
                   Floor Broekgaarden},
-  title        = {layabinu/VIMES\_VIsualization\_of\_Massive\_Evolving\_S
-                   tars: VIMES v1.0.0 — First release
-                  },
+  title        = {layabinu/VIMES\_VIsualization\_of\_Massive\_Evolving\_Stars: VIMES v1.0.0 — First release},
   month        = jun,
   year         = 2026,
   publisher    = {Zenodo},
@@ -111,4 +110,4 @@ If you make use of VIMES, we ask you to cite the following Zenodo publication
                    Massive\_Evolving\_Stars-1bf8443
                   },
 }
-
+```

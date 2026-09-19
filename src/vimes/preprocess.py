@@ -19,7 +19,7 @@ import h5py as h5
 import numpy as np
 
 BASE_DIR = Path(__file__).parent
-HDF5_PATH = '/Users/ronin/animation/Final Animation/examples/BSE_Detailed_Output_4.h5'
+HDF5_PATH = "/Users/ronin/animation/Final Animation/examples/BSE_Detailed_Output_4.h5"
 OUTPUT_FRAMES_FILE = BASE_DIR / "frames_data.npz"
 
 FRAMES_PER_PHASE = 100
@@ -60,9 +60,9 @@ def load_hdf5_and_mask(path):
     f = h5.File(str(path), "r")
     record_type = f["Record_Type"][()]
     mt_timescale = f["MassTransferTimescale"][()]
-    
+
     mask = (record_type == 4) | (mt_timescale == 3)
-    
+
     Data = {key: val[()][mask] for key, val in f.items()}
     f.close()
     return Data
@@ -187,7 +187,7 @@ def preprocess_to_frames(hdf5_path, out_path):
         enhanced.append(sampled[-1])
 
         mt_frames = []
-        last_mt_frame = -999 
+        last_mt_frame = -999
 
         for i, f in enumerate(enhanced):
             mt_frames.append(f)

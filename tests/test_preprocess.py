@@ -1,16 +1,13 @@
 import math
 
 import numpy as np
-import pytest
 
 from vimes.preprocess import (
+    detect_large_jump,
+    detect_mt_starts,
+    detect_phases_indices,
     get_stellar_types,
     interp,
-    detect_large_jump,
-    detect_phases_indices,
-    detect_mt_starts,
-    make_event_string,
-    sample_indices,
 )
 
 
@@ -18,6 +15,7 @@ class TestGetStellarTypes:
     """
     Test the mapping of stellar types.
     """
+
     @classmethod
     def setup_class(cls):
         cls.expected_types = [
@@ -54,6 +52,7 @@ class TestInterp:
     """
     Test the interp function.
     """
+
     @classmethod
     def setup_class(cls):
         cls.data = np.linspace(0, 100, 10)
@@ -84,6 +83,7 @@ class TestDetectLargeJump:
     """
     Test the detection of large jumps between two values.
     """
+
     def test_no_jump_zero_value(self):
         assert not detect_large_jump(0.0, 0.0)
         assert not detect_large_jump(0.0, 10.0)
@@ -105,6 +105,7 @@ class TestDetectPhasesIndices:
     """
     Test the detection of changes in phase based on stellar types.
     """
+
     def test_single_phase_no_type_change(self):
         stellar_type_1 = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
         stellar_type_2 = np.array([2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
@@ -134,6 +135,7 @@ class TestDetectMtStarts:
     """
     Test the detection of mass transfer starts.
     """
+
     def test_no_mt(self):
         mt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert detect_mt_starts(mt) == set()
