@@ -194,7 +194,7 @@ class PygameAnimator:
         print(f"Loaded {len(self.frames)} frames.")
 
     def get_star_surface(self, stype_name, radius_rsun):
-        key = (stype_name, int(round(radius_rsun)))
+        key = (stype_name, round(radius_rsun))
         if key in self.img_cache:
             return self.img_cache[key]
 
