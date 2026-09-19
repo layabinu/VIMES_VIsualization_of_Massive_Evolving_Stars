@@ -1,12 +1,16 @@
+[build-system]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.11.6,<0.12" ]
+
 [project]
 name = "vimes"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "Laya Binu", email = "layambinu@gmail.com" }
+    { name = "Laya Binu", email = "layambinu@gmail.com" },
 ]
-requires-python = ">=3.10, <3.15"
+requires-python = ">=3.10,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
@@ -29,37 +33,15 @@ dependencies = [
 ]
 
 [project.scripts]
-vimes-preprocess = "vimes.cli:preprocess"
 vimes = "vimes.cli:animate"
-
-[tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
-select = [
-    # pycodestyle
-    "E",
-    # pycodestyle-warnings
-    "W",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
-]
-
-[build-system]
-requires = ["uv_build>=0.11.6,<0.12.0"]
-build-backend = "uv_build"
+vimes-preprocess = "vimes.cli:preprocess"
 
 [dependency-groups]
 dev = [
+    "prek==0.5.3",
     "pyinstrument==5.1.2",
     "pytest==9.0.3",
-    "ruff==0.15.14",
+    # ruff version is managed by git hooks setup,
+    # but having it as a dependency can help with IDE - lint integrations.
+    "ruff==0.16.8",
 ]

@@ -61,14 +61,21 @@ This also comes with several optional inputs:
 
 ## Code Quality and Testing
 
-If you are developing this project, please run code quality checks before committing to the repository:
+If you are developing this project, please install git hooks so code quality checks will be run before committing to the repository:
 
 ```bash
-# Format code with Ruff
-uv run ruff format src/
+prek install
+```
 
-# Lint code with Ruff (you can remove the --fix flag to stop it automatically fixing the issues)
-uv run ruff check --fix src/
+The same checks can be invoked manually via
+
+```bash
+# Checks all files
+prek run --all-files
+
+# or
+# Checks only staged changes
+prek run
 ```
 
 It is also recommended to run tests before committing to the repository:

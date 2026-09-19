@@ -10,7 +10,6 @@ test with more extremes
 -very very large radii
     - large diffe4renes in radii for both stars
 """
-#!/usr/bin/env python3
 
 import argparse
 import math
@@ -195,7 +194,7 @@ class PygameAnimator:
         print(f"Loaded {len(self.frames)} frames.")
 
     def get_star_surface(self, stype_name, radius_rsun):
-        key = (stype_name, int(round(radius_rsun)))
+        key = (stype_name, round(radius_rsun))
         if key in self.img_cache:
             return self.img_cache[key]
 
@@ -540,8 +539,7 @@ class PygameAnimator:
                 dy = sy2 - sy1
                 dist = math.hypot(dx, dy)
                 w = int(dist * 1.8)
-                if w < 10:
-                    w = 10
+                w = max(w, 10)
                 h = int(w * (self.ce_img.get_height() / self.ce_img.get_width()))
                 ce_scaled = pygame.transform.smoothscale(self.ce_img, (w, h))
                 midx = (sx1 + sx2) // 2 - w // 2

@@ -103,8 +103,8 @@ def sample_indices(start, end, n):
 def interp(data, idx):
     if abs(idx - round(idx)) < 1e-9:
         return float(data[int(idx)])
-    lo = int(math.floor(idx))
-    hi = int(math.ceil(idx))
+    lo = math.floor(idx)
+    hi = math.ceil(idx)
     frac = idx - lo
     return (1 - frac) * float(data[lo]) + frac * float(data[hi])
 
@@ -157,9 +157,9 @@ def preprocess_to_frames(hdf5_path, out_path):
             ]:
                 f[k] = interp(Data[k], pos)
 
-            f["stypeName1"] = type_map(int(round(interp(Data["Stellar_Type(1)"], pos))))
-            f["stypeName2"] = type_map(int(round(interp(Data["Stellar_Type(2)"], pos))))
-            f["eventString"] = make_event_string(int(round(pos)), Data, type_map)
+            f["stypeName1"] = type_map(round(interp(Data["Stellar_Type(1)"], pos)))
+            f["stypeName2"] = type_map(round(interp(Data["Stellar_Type(2)"], pos)))
+            f["eventString"] = make_event_string(round(pos), Data, type_map)
             sampled.append(f)
 
         # interpolation
@@ -202,9 +202,7 @@ def preprocess_to_frames(hdf5_path, out_path):
         for i, f in enumerate(enhanced):
             mt_frames.append(f)
 
-            data_idx = int(
-                round(start + (end - start) * (i / max(1, len(enhanced) - 1)))
-            )
+            data_idx = round(start + (end - start) * (i / max(1, len(enhanced) - 1)))
 
             is_ce_event = (
                 data_idx < len(Data["MassTransferTimescale"])
