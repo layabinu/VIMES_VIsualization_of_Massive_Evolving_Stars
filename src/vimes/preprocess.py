@@ -87,6 +87,14 @@ def detect_phases_indices(stellar_type_1, stellar_type_2):
     return phases
 
 
+def detect_mt_starts(mt):
+    starts = set()
+    for i in range(1, len(mt)):
+        if mt[i - 1] == 0 and mt[i] > 0:
+            starts.add(i)
+    return starts
+
+
 def sample_indices(start, end, n):
     return np.linspace(start, end, n).tolist()
 
@@ -126,6 +134,7 @@ def preprocess_to_frames(hdf5_path, out_path):
     Data = load_hdf5_and_mask(hdf5_path)
     type_map = get_stellar_types()
     phases = detect_phases_indices(Data["Stellar_Type(1)"], Data["Stellar_Type(2)"])
+    mt_starts = detect_mt_starts(Data["MT_History"].astype(int))
 
     frames = []
 
@@ -202,15 +211,22 @@ def preprocess_to_frames(hdf5_path, out_path):
             )
 
             if is_ce_event:
-                if i - last_mt_frame < 25:
-                    continue
+                event_string = "Common Envelope"
+            elif data_idx in mt_starts:
+                event_string = "Mass Transfer"
+            else:
+                continue
 
-                for _ in range(MT_PADDING_FRAMES):
-                    g = f.copy()
-                    g["eventString"] = "Common Envelope"
-                    mt_frames.append(g)
+            # Skip if the previous event was too close
+            if i - last_mt_frame < 25:
+                continue
 
-                last_mt_frame = i
+            for _ in range(MT_PADDING_FRAMES):
+                g = f.copy()
+                g["eventString"] = event_string
+                mt_frames.append(g)
+
+            last_mt_frame = i
 
         # inter-phase interpolation
         if frames:
