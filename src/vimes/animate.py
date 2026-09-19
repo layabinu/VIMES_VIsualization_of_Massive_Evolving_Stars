@@ -343,7 +343,7 @@ class PygameAnimator:
                     surf2 = self.get_star_surface(f["stypeName2"], f["Radius(2)"])
 
             event_str = f.get("eventString", "").lower()
-            
+
             if "common envelope" in event_str and self.ce_img:
                 # Display CE image scaled to fill the entire screen
                 ce_scaled = pygame.transform.smoothscale(self.ce_img, SCREEN_SIZE)
@@ -623,7 +623,11 @@ class PygameAnimator:
                         2,
                     )
                     if r in major_ticks:
-                        label_surf = self.font.render(str(int(r)), True, (255, 255, 255))
+                        label_surf = self.font.render(
+                            str(int(r)),
+                            True,
+                            (255, 255, 255),
+                        )
                         self.screen.blit(
                             label_surf,
                             (
@@ -671,7 +675,11 @@ class PygameAnimator:
                         2,
                     )
                     if r in major_ticks:
-                        label_surf = self.font.render(str(int(r)), True, (255, 255, 255))
+                        label_surf = self.font.render(
+                            str(int(r)),
+                            True,
+                            (255, 255, 255),
+                        )
                         self.screen.blit(
                             label_surf,
                             (
