@@ -539,8 +539,7 @@ class PygameAnimator:
                 dy = sy2 - sy1
                 dist = math.hypot(dx, dy)
                 w = int(dist * 1.8)
-                if w < 10:
-                    w = 10
+                w = max(w, 10)
                 h = int(w * (self.ce_img.get_height() / self.ce_img.get_width()))
                 ce_scaled = pygame.transform.smoothscale(self.ce_img, (w, h))
                 midx = (sx1 + sx2) // 2 - w // 2
