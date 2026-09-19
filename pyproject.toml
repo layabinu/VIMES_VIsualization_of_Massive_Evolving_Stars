@@ -6,12 +6,22 @@ readme = "README.md"
 authors = [
     { name = "Laya Binu", email = "layambinu@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.15"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "astro-tulips>=1.0.3",
     "h5py>=3.16.0",
     "imageio>=2.37.3",
-    "numpy>=2.2.6",
+    # 2.3.2 is the earliest version with Python 3.14 support
+    # https://numpy.org/doc/stable/release/2.3.2-notes.html
+    "numpy>=2.3.2",
     "pillow>=12.2.0",
     "pygame>=2.6.1",
 ]
