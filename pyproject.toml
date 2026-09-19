@@ -36,7 +36,10 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "prek==0.5.3",
     "pyinstrument==5.1.2",
     "pytest==9.0.3",
+    # ruff version is managed by git hooks setup,
+    # but having it as a dependency can help with IDE - lint integrations.
     "ruff==0.16.8",
 ]
