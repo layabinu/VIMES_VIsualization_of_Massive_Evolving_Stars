@@ -8,6 +8,7 @@ from vimes.preprocess import (
     detect_phases_indices,
     get_stellar_types,
     interp,
+    type_map,
 )
 
 
@@ -39,12 +40,10 @@ class TestGetStellarTypes:
         ]
 
     def test_known_indices(self):
-        type_map = get_stellar_types()
         for i, expected in enumerate(self.expected_types):
             assert type_map(i) == expected
 
     def test_out_of_range_returns_unknown(self):
-        type_map = get_stellar_types()
         assert type_map(len(self.expected_types) + 1) == "unknown"
 
 

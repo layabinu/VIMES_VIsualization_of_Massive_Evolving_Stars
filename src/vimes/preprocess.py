@@ -57,6 +57,9 @@ def get_stellar_types():
     return type_map
 
 
+type_map = get_stellar_types()
+
+
 def load_hdf5_and_mask(path):
     f = h5.File(str(path), "r")
     record_type = f["Record_Type"][()]
@@ -119,7 +122,7 @@ def detect_large_jump(
     return abs(v1 - v2) >= threshold_abs
 
 
-def make_event_string(idx, Data, type_map):
+def make_event_string(idx, Data):
     if idx == 0:
         return (
             f"Zero-age main-sequence, Z = {float(Data['Metallicity@ZAMS(1)'][0]):.4f}"
@@ -133,7 +136,6 @@ def make_event_string(idx, Data, type_map):
 def preprocess_to_frames(hdf5_path, out_path):
     print("Loading HDF5...")
     Data = load_hdf5_and_mask(hdf5_path)
-    type_map = get_stellar_types()
     phases = detect_phases_indices(Data["Stellar_Type(1)"], Data["Stellar_Type(2)"])
     mt_starts = detect_mt_starts(Data["MT_History"].astype(int))
 
@@ -159,7 +161,7 @@ def preprocess_to_frames(hdf5_path, out_path):
 
             f["stypeName1"] = type_map(round(interp(Data["Stellar_Type(1)"], pos)))
             f["stypeName2"] = type_map(round(interp(Data["Stellar_Type(2)"], pos)))
-            f["eventString"] = make_event_string(round(pos), Data, type_map)
+            f["eventString"] = make_event_string(round(pos), Data)
             sampled.append(f)
 
         # interpolation
