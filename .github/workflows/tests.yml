@@ -1,0 +1,60 @@
+name: "Tests"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request: ~
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # renovate: datasource=pypi depName=uv
+  UV_VERSION: 0.12.17
+
+jobs:
+  run-tests:
+    name: pytest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv ${{ env.UV_VERSION }} & Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4  # v10.1.0
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+          version: ${{ env.UV_VERSION }}
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      # Verify the tests complete without an error
+      - name: Run tests
+        run: |
+          uv run pytest
+
+      # Verify the package can be built and installed
+      - name: Build package
+        run: uv build
+
+      - name: Install built package
+        run: uv pip install dist/*.whl
