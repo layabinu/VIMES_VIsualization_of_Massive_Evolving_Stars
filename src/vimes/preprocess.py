@@ -23,7 +23,7 @@ JUMP_THRESHOLD_ABS = 50.0
 MT_PADDING_FRAMES = 60
 
 
-def get_stellar_types():
+def get_stellar_type(index: int) -> str:
     stellar_types = [
         "MS",
         "MS",
@@ -44,13 +44,10 @@ def get_stellar_types():
         "CHE",
     ]
 
-    def type_map(idx):
-        return stellar_types[int(idx)] if int(idx) < len(stellar_types) else "unknown"
-
-    return type_map
-
-
-type_map = get_stellar_types()
+    try:
+        return stellar_types[index]
+    except IndexError:
+        return "unknown"
 
 
 def load_hdf5_and_mask(path):
@@ -120,8 +117,8 @@ def make_event_string(idx, data):
         return (
             f"Zero-age main-sequence, Z = {float(data['Metallicity@ZAMS(1)'][0]):.4f}"
         )
-    t1 = type_map(data["Stellar_Type(1)"][idx])
-    t2 = type_map(data["Stellar_Type(2)"][idx])
+    t1 = get_stellar_type(data["Stellar_Type(1)"][idx])
+    t2 = get_stellar_type(data["Stellar_Type(2)"][idx])
     return f"Phase: {t1} + {t2}"
 
 
@@ -152,8 +149,8 @@ def preprocess_to_frames(hdf5_path, out_path):
             ]:
                 f[k] = interp(data[k], pos)
 
-            f["stypeName1"] = type_map(round(interp(data["Stellar_Type(1)"], pos)))
-            f["stypeName2"] = type_map(round(interp(data["Stellar_Type(2)"], pos)))
+            f["stypeName1"] = get_stellar_type(round(interp(data["Stellar_Type(1)"], pos)))
+            f["stypeName2"] = get_stellar_type(round(interp(data["Stellar_Type(2)"], pos)))
             f["eventString"] = make_event_string(round(pos), data)
             sampled.append(f)
 
