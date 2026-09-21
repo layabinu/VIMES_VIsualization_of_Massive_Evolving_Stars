@@ -13,7 +13,12 @@ from vimes.preprocess import (
 
 class TestGetStellarType:
     """
-    Test the mapping of stellar types.
+    Test the ordering of stellar types.
+
+    Since the index values are coming from COMPAS,
+    the stellar types list needs a particular content and order.
+
+    https://compas.readthedocs.io/en/latest/pages/Developer%20guide/Headers/typedefs-dot-h.html
     """
 
     @classmethod
@@ -39,6 +44,7 @@ class TestGetStellarType:
         ]
 
     def test_known_indices(self):
+        # TODO: Can benefit from sub / parameterized tests
         for i, expected in enumerate(self.expected_types):
             assert get_stellar_type(i) == expected
 
