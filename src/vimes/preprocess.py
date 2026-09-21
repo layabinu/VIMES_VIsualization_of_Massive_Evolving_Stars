@@ -30,31 +30,41 @@ JUMP_THRESHOLD_ABS = 50.0
 MT_PADDING_FRAMES = 60
 
 
-def get_stellar_types():
+def get_stellar_type(index: int) -> str:
+    """
+    Get the stellar type from the index
+
+    Follows the content & ordering from COMPAS
+    https://compas.readthedocs.io/en/latest/pages/Developer%20guide/Headers/typedefs-dot-h.html
+    """
     stellar_types = [
-        "MS",
-        "MS",
-        "HG",
-        "FGB",
-        "CHeB",
-        "EAGB",
-        "TPAGB",
-        "HeMS",
-        "HeHG",
-        "HeGB",
-        "HeWD",
-        "COWD",
-        "ONeWD",
-        "NS",
-        "BH",
-        "MR",
-        "CHE",
+        "MS",  # MS_LTE_07 - Main Sequence <= 0.7
+        "MS",  # MS_GT_07 - Main Sequence > 0.7
+        "HG",  # HERTZSPRUNG_GAP - Hertzsprung Gap
+        "FGB",  # FIRST_GIANT_BRANCH - First Giant Branch
+        "CHeB",  # CORE_HELIUM_BURNING - Core Helium Burning
+        "EAGB",  # EARLY_ASYMPTOTIC_GIANT_BRANCH - Early Asymptotic Giant Branch
+        "TPAGB",  # THERMALLY_PULSING_ASYMPTOTIC_GIANT_BRANCH - Thermally Pulsing Asymptotic Giant Branch
+        "HeMS",  # NAKED_HELIUM_STAR_MS - Naked Helium Star MS
+        "HeHG",  # NAKED_HELIUM_STAR_HERTZSPRUNG_GAP - Naked Helium Star Hertzsprung Gap
+        "HeGB",  # NAKED_HELIUM_STAR_GIANT_BRANCH - Naked Helium Star Giant Branch
+        "HeWD",  # HELIUM_WHITE_DWARF - Helium White Dwarf
+        "COWD",  # CARBON_OXYGEN_WHITE_DWARF - Carbon-Oxygen White Dwarf
+        "ONeWD",  # OXYGEN_NEON_WHITE_DWARF - Oxygen-Neon White Dwarf
+        "NS",  # NEUTRON_STAR - Neutron Star
+        "BH",  # BLACK_HOLE - Black Hole
+        "MR",  # MASSLESS_REMNANT - Massless Remnant
+        "CHE",  # CHEMICALLY_HOMOGENEOUS - Chemically Homogeneous
+        # FIXME: Following elements are missing
+        # STAR - "Star"
+        # BINARY_STAR - "Binary Star"
+        # NONE - "Not a Star!"
     ]
 
-    def type_map(idx):
-        return stellar_types[int(idx)] if int(idx) < len(stellar_types) else "unknown"
-
-    return type_map
+    try:
+        return stellar_types[index]
+    except IndexError:
+        return "unknown"
 
 
 def load_hdf5_and_mask(path):
@@ -119,13 +129,13 @@ def detect_large_jump(
     return abs(v1 - v2) >= threshold_abs
 
 
-def make_event_string(idx, Data, type_map):
+def make_event_string(idx, Data):
     if idx == 0:
         return (
             f"Zero-age main-sequence, Z = {float(Data['Metallicity@ZAMS(1)'][0]):.4f}"
         )
-    t1 = type_map(Data["Stellar_Type(1)"][idx])
-    t2 = type_map(Data["Stellar_Type(2)"][idx])
+    t1 = get_stellar_type(Data["Stellar_Type(1)"][idx])
+    t2 = get_stellar_type(Data["Stellar_Type(2)"][idx])
     return f"Phase: {t1} + {t2}"
 
 
@@ -133,7 +143,6 @@ def make_event_string(idx, Data, type_map):
 def preprocess_to_frames(hdf5_path, out_path):
     print("Loading HDF5...")
     Data = load_hdf5_and_mask(hdf5_path)
-    type_map = get_stellar_types()
     phases = detect_phases_indices(Data["Stellar_Type(1)"], Data["Stellar_Type(2)"])
     mt_starts = detect_mt_starts(Data["MT_History"].astype(int))
 
@@ -157,9 +166,9 @@ def preprocess_to_frames(hdf5_path, out_path):
             ]:
                 f[k] = interp(Data[k], pos)
 
-            f["stypeName1"] = type_map(round(interp(Data["Stellar_Type(1)"], pos)))
-            f["stypeName2"] = type_map(round(interp(Data["Stellar_Type(2)"], pos)))
-            f["eventString"] = make_event_string(round(pos), Data, type_map)
+            f["stypeName1"] = get_stellar_type(round(interp(Data["Stellar_Type(1)"], pos)))
+            f["stypeName2"] = get_stellar_type(round(interp(Data["Stellar_Type(2)"], pos)))
+            f["eventString"] = make_event_string(round(pos), Data)
             sampled.append(f)
 
         # interpolation

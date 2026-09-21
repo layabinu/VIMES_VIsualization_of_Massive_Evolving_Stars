@@ -6,14 +6,19 @@ from vimes.preprocess import (
     detect_large_jump,
     detect_mt_starts,
     detect_phases_indices,
-    get_stellar_types,
+    get_stellar_type,
     interp,
 )
 
 
-class TestGetStellarTypes:
+class TestGetStellarType:
     """
-    Test the mapping of stellar types.
+    Test the ordering of stellar types.
+
+    Since the index values are coming from COMPAS,
+    the stellar types list needs a particular content and order.
+
+    https://compas.readthedocs.io/en/latest/pages/Developer%20guide/Headers/typedefs-dot-h.html
     """
 
     @classmethod
@@ -39,13 +44,12 @@ class TestGetStellarTypes:
         ]
 
     def test_known_indices(self):
-        type_map = get_stellar_types()
+        # TODO: Can benefit from sub / parameterized tests
         for i, expected in enumerate(self.expected_types):
-            assert type_map(i) == expected
+            assert get_stellar_type(i) == expected
 
     def test_out_of_range_returns_unknown(self):
-        type_map = get_stellar_types()
-        assert type_map(len(self.expected_types) + 1) == "unknown"
+        assert get_stellar_type(len(self.expected_types) + 1) == "unknown"
 
 
 class TestInterp:
