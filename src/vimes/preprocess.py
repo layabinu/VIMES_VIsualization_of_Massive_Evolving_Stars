@@ -31,24 +31,34 @@ MT_PADDING_FRAMES = 60
 
 
 def get_stellar_type(index: int) -> str:
+    """
+    Get the stellar type from the index
+
+    Follows the content & ordering from COMPAS
+    https://compas.readthedocs.io/en/latest/pages/Developer%20guide/Headers/typedefs-dot-h.html
+    """
     stellar_types = [
-        "MS",
-        "MS",
-        "HG",
-        "FGB",
-        "CHeB",
-        "EAGB",
-        "TPAGB",
-        "HeMS",
-        "HeHG",
-        "HeGB",
-        "HeWD",
-        "COWD",
-        "ONeWD",
-        "NS",
-        "BH",
-        "MR",
-        "CHE",
+        "MS",  # MS_LTE_07 - Main Sequence <= 0.7
+        "MS",  # MS_GT_07 - Main Sequence > 0.7
+        "HG",  # HERTZSPRUNG_GAP - Hertzsprung Gap
+        "FGB",  # FIRST_GIANT_BRANCH - First Giant Branch
+        "CHeB",  # CORE_HELIUM_BURNING - Core Helium Burning
+        "EAGB",  # EARLY_ASYMPTOTIC_GIANT_BRANCH - Early Asymptotic Giant Branch
+        "TPAGB",  # THERMALLY_PULSING_ASYMPTOTIC_GIANT_BRANCH - Thermally Pulsing Asymptotic Giant Branch
+        "HeMS",  # NAKED_HELIUM_STAR_MS - Naked Helium Star MS
+        "HeHG",  # NAKED_HELIUM_STAR_HERTZSPRUNG_GAP - Naked Helium Star Hertzsprung Gap
+        "HeGB",  # NAKED_HELIUM_STAR_GIANT_BRANCH - Naked Helium Star Giant Branch
+        "HeWD",  # HELIUM_WHITE_DWARF - Helium White Dwarf
+        "COWD",  # CARBON_OXYGEN_WHITE_DWARF - Carbon-Oxygen White Dwarf
+        "ONeWD",  # OXYGEN_NEON_WHITE_DWARF - Oxygen-Neon White Dwarf
+        "NS",  # NEUTRON_STAR - Neutron Star
+        "BH",  # BLACK_HOLE - Black Hole
+        "MR",  # MASSLESS_REMNANT - Massless Remnant
+        "CHE",  # CHEMICALLY_HOMOGENEOUS - Chemically Homogeneous
+        # FIXME: Following elements are missing
+        # STAR - "Star"
+        # BINARY_STAR - "Binary Star"
+        # NONE - "Not a Star!"
     ]
 
     try:
