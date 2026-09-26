@@ -12,9 +12,12 @@ ADD COMMENTS AND DOUBLE CHECK ALL CODE
 """
 
 import math
+from pathlib import Path
+from typing import Annotated
 
 import h5py as h5
 import numpy as np
+import typer
 
 FRAMES_PER_PHASE = 100
 INTERPOLATED_FRAMES_FOR_JUMP = 50
@@ -257,50 +260,28 @@ def preprocess_to_frames(hdf5_path, out_path):
     print(f"Saved {len(frames)} frames → {out_path}")
 
 
-def cli():
-    import argparse
-    from pathlib import Path
+cli_app = typer.Typer(
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
+
+Hdf5OptionType = Annotated[
+    Path,
+    typer.Argument(exists=True, help="Path to the input HDF5 file."),
+]
+
+OutOptionType = Annotated[
+    Path,
+    typer.Argument(help="Path to the output frames file."),
+]
+
+
+@cli_app.command()
+def cli(
+    hdf5: Hdf5OptionType = Path(__file__).parent / "BSE_Detailed_Output_0.h5",
+    out: OutOptionType = Path(__file__).parent / "frames_data.npz",
+) -> None:
     from .temp_to_color import add_temperatures_and_rgb
 
-    base_dir = Path(__file__).parent
-
-    parser = argparse.ArgumentParser(
-        description="Parse preprocessing settings.",
-    )
-
-    def existing_path(value):
-        path = Path(value)
-
-        if not path.exists():
-            msg = f"{path} not found."
-            raise argparse.ArgumentTypeError(msg)
-
-        return path
-
-    # argparse type conversion doesn't applied to non-str values
-    # https://docs.python.org/3/library/argparse.html#default
-    default_hdf5_path = str(base_dir / "BSE_Detailed_Output_0.h5")
-    parser.add_argument(
-        "hdf5",
-        nargs="?",
-        default=default_hdf5_path,
-        type=existing_path,
-        help="Path to the input HDF5 file.",
-    )
-
-    # argparse type conversion doesn't applied to non-str values
-    # https://docs.python.org/3/library/argparse.html#default
-    default_frames_path = str(base_dir / "frames_data.npz")
-    parser.add_argument(
-        "out",
-        nargs="?",
-        default=default_frames_path,
-        type=existing_path,
-        help="Path to the output frames file.",
-    )
-
-    args = parser.parse_args()
-
-    preprocess_to_frames(args.hdf5, args.out)
-    add_temperatures_and_rgb(args.hdf5, args.out, args.out)
+    preprocess_to_frames(hdf5, out)
+    add_temperatures_and_rgb(hdf5, out, out)

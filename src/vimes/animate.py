@@ -12,10 +12,12 @@ test with more extremes
 import enum
 import math
 from pathlib import Path
+from typing import Annotated
 
 import imageio
 import numpy as np
 import pygame
+import typer
 from PIL import Image
 from pygame import gfxdraw
 
@@ -697,83 +699,69 @@ class ScalingType(enum.Enum):
     LOG = "log"
     LINEAR = "linear"
 
-    def __str__(self):
-        return self.value
-
 
 class ImageType(enum.Enum):
     DEFAULT = "default"
     TULIPS = "tulips"
 
-    def __str__(self):
-        return self.value
+
+cli_app = typer.Typer(
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
 
-def cli():
-    import argparse
+def existing_frames_path(value: Path) -> Path:
+    if not value.exists():
+        msg =  f"{value} does not exist. Run vimes-preprocess first."
+        raise typer.BadParameter(msg)
 
-    parser = argparse.ArgumentParser(
-        description="Parse scaling and image settings.",
-    )
+    return value
 
-    def existing_frames_path(value):
-        path = Path(value)
 
-        if not path.exists():
-            msg = f"{path} not found. Run vimes-preprocess first."
-            raise argparse.ArgumentTypeError(msg)
-
-        return path
-
-    # argparse type conversion doesn't applied to non-str values
-    # https://docs.python.org/3/library/argparse.html#default
-    default_frames_path = str(BASE_DIR / "frames_data.npz")
-    parser.add_argument(
-        "frames",
-        nargs="?",
-        default=default_frames_path,
-        type=existing_frames_path,
+FramesOptionType = Annotated[
+    Path,
+    typer.Argument(
+        callback=existing_frames_path,
         help="Path to the input frames file.",
-    )
+    ),
+]
 
-    parser.add_argument(
-        "--scaling",
-        type=ScalingType,
-        choices=list(ScalingType),
-        default=ScalingType.LINEAR,
-        help="The type of scaling to apply.",
-    )
+ScalingOptionType = Annotated[
+    ScalingType,
+    typer.Option(help="The type of scaling to apply."),
+]
 
-    parser.add_argument(
-        "--images",
-        type=ImageType,
-        choices=list(ImageType),
-        default=ImageType.DEFAULT,
-        help="The set of images to use.",
-    )
+ImagesOptionType = Annotated[
+    ImageType,
+    typer.Option(help="The set of images to use."),
+]
 
-    parser.add_argument(
-        "--save-mp4",
-        type=str,
-        default=None,
-        help="Save animation to MP4 file",
-    )
+SaveMp4OptionType = Annotated[
+    str | None,
+    typer.Option(help="Save animation to MP4 file"),
+]
 
-    parser.add_argument(
-        "--no-display",
-        action="store_true",
-        help="Run headless (do not open a window)",
-    )
+NoDisplayOptionType = Annotated[
+    bool,
+    typer.Option("--no-display", help="Run headless (do not open a window)"),
+]
 
-    args = parser.parse_args()
 
-    print(f"scaling {args.scaling}, images {args.images}")
+@cli_app.command()
+def cli(
+    frames: FramesOptionType = BASE_DIR / "frames_data.npz",
+    scaling: ScalingOptionType = ScalingType.LINEAR,
+    images: ImagesOptionType = ImageType.DEFAULT,
+    save_mp4: SaveMp4OptionType = None,
+    no_display: NoDisplayOptionType = False,
+) -> None:
+    typer.echo(f"scaling {scaling.value}, images {images.value}")
 
     animator = PygameAnimator(
-        args.frames,
-        save_mp4=args.save_mp4,
-        no_display=args.no_display,
-        use_log_scaling=args.scaling is ScalingType.LOG,
-        use_tulips_color=args.images is ImageType.TULIPS,
+        frames,
+        save_mp4=save_mp4,
+        no_display=no_display,
+        use_log_scaling=scaling is ScalingType.LOG,
+        use_tulips_color=images is ImageType.TULIPS,
     )
     animator.run()
