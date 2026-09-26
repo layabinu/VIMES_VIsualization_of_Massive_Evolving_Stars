@@ -757,9 +757,8 @@ def cli():
     args = parser.parse_args()
 
     if not args.frames.exists():
-        raise FileNotFoundError(
-            f"{args.frames} not found. Run vimes-preprocess first."
-        )
+        msg = f"{args.frames} not found. Run vimes-preprocess first."
+        raise FileNotFoundError(msg)
 
     print(f"scaling {args.scaling}, images {args.images}")
 
