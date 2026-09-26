@@ -29,11 +29,14 @@ dependencies = [
     # 2.5.5 is the earlist version with Python 3.14 support
     # https://github.com/pygame-community/pygame-ce/releases/tag/2.5.5
     "pygame-ce>=2.5.5",
+    # 0.20.0 is the earlist version with Python 3.14 support
+    # https://typer.tiangolo.com/release-notes/#0200-2025-10-20
+    "typer>=0.20.0",
 ]
 
 [project.scripts]
-vimes = "vimes.cli:animate"
-vimes-preprocess = "vimes.cli:preprocess"
+vimes = "vimes.animate:cli_app"
+vimes-preprocess = "vimes.preprocess:cli_app"
 
 [dependency-groups]
 dev = [

@@ -11,17 +11,13 @@ play around with current hardcoded values
 ADD COMMENTS AND DOUBLE CHECK ALL CODE
 """
 
-import argparse
 import math
 from pathlib import Path
+from typing import Annotated
 
 import h5py as h5
 import numpy as np
-
-BASE_DIR = Path(__file__).parent
-EXAMPLES_DIR = BASE_DIR.parents[1] / "examples"
-HDF5_PATH = EXAMPLES_DIR / "BSE_Detailed_Output_0.h5"
-OUTPUT_FRAMES_FILE = BASE_DIR / "frames_data.npz"
+import typer
 
 FRAMES_PER_PHASE = 100
 INTERPOLATED_FRAMES_FOR_JUMP = 50
@@ -264,14 +260,28 @@ def preprocess_to_frames(hdf5_path, out_path):
     print(f"Saved {len(frames)} frames → {out_path}")
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--hdf5", default=str(HDF5_PATH))
-    parser.add_argument("--out", default=str(OUTPUT_FRAMES_FILE))
-    args = parser.parse_args()
-
-    preprocess_to_frames(args.hdf5, args.out)
+cli_app = typer.Typer(
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
 
-if __name__ == "__main__":
-    main()
+Hdf5OptionType = Annotated[
+    Path,
+    typer.Argument(exists=True, help="Path to the input HDF5 file."),
+]
+
+OutOptionType = Annotated[
+    Path,
+    typer.Argument(help="Path to the output frames file."),
+]
+
+
+@cli_app.command()
+def cli(
+    hdf5: Hdf5OptionType = Path(__file__).parent / "BSE_Detailed_Output_0.h5",
+    out: OutOptionType = Path(__file__).parent / "frames_data.npz",
+) -> None:
+    from .temp_to_color import add_temperatures_and_rgb
+
+    preprocess_to_frames(hdf5, out)
+    add_temperatures_and_rgb(hdf5, out, out)
