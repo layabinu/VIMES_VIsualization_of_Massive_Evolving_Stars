@@ -758,7 +758,7 @@ def cli():
 
     if not args.frames.exists():
         raise FileNotFoundError(
-            f"{args.frames} not found. Run compas_preprocess.py first."
+            f"{args.frames} not found. Run vimes-preprocess first."
         )
 
     print(f"scaling {args.scaling}, images {args.images}")
