@@ -690,3 +690,64 @@ class PygameAnimator:
             self.video_writer.close()
 
         pygame.quit()
+
+
+def cli():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Parse scaling and image settings.",
+    )
+
+    default_frames_path = BASE_DIR / "frames_data.npz"
+    parser.add_argument(
+        "frames",
+        default=default_frames_path,
+        type=Path,
+        help="Path to the input frames file.",
+    )
+
+    parser.add_argument(
+        "--scaling",
+        choices=["log", "linear"],
+        default="linear",
+        help="The type of scaling to apply (log or linear).",
+    )
+
+    parser.add_argument(
+        "--images",
+        choices=["tulips", "default"],
+        default="default",
+        help="The set of images to use (tulips or default).",
+    )
+
+    parser.add_argument(
+        "--save-mp4",
+        type=str,
+        default=None,
+        help="Save animation to MP4 file",
+    )
+
+    parser.add_argument(
+        "--no-display",
+        action="store_true",
+        help="Run headless (do not open a window)",
+    )
+
+    args = parser.parse_args()
+
+    if not args.frames.exists():
+        raise FileNotFoundError(
+            f"{args.frames} not found. Run compas_preprocess.py first."
+        )
+
+    print(f"scaling {args.scaling}, images {args.images}")
+
+    animator = PygameAnimator(
+        args.frames,
+        save_mp4=args.save_mp4,
+        no_display=args.no_display,
+        use_log_scaling=args.scaling == "log",
+        use_tulips_color=args.images == "tulips",
+    )
+    animator.run()

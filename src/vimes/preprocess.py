@@ -255,3 +255,40 @@ def preprocess_to_frames(hdf5_path, out_path):
 
     np.savez_compressed(out_path, frames=frames)
     print(f"Saved {len(frames)} frames → {out_path}")
+
+
+def cli():
+    import argparse
+    from pathlib import Path
+
+    from .temp_to_color import add_temperatures_and_rgb
+
+    base_dir = Path(__file__).parent
+
+    parser = argparse.ArgumentParser(
+        description="Parse preprocessing settings.",
+    )
+
+    default_hdf5_path = base_dir / "BSE_Detailed_Output_0.h5"
+    parser.add_argument(
+        "hdf5",
+        default=default_hdf5_path,
+        type=Path,
+        help="Path to the input HDF5 file.",
+    )
+
+    default_frames_path = base_dir / "frames_data.npz"
+    parser.add_argument(
+        "out",
+        default=default_frames_path,
+        type=Path,
+        help="Path to the output frames file.",
+    )
+
+    args = parser.parse_args()
+
+    if not args.hdf5.exists():
+        raise FileNotFoundError(f"{args.hdf5} not found.")
+
+    preprocess_to_frames(args.hdf5, args.out)
+    add_temperatures_and_rgb(args.hdf5, args.out, args.out)
