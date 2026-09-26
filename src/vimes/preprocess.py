@@ -272,6 +272,7 @@ def cli():
     default_hdf5_path = base_dir / "BSE_Detailed_Output_0.h5"
     parser.add_argument(
         "hdf5",
+        nargs="?",
         default=default_hdf5_path,
         type=Path,
         help="Path to the input HDF5 file.",
@@ -280,6 +281,7 @@ def cli():
     default_frames_path = base_dir / "frames_data.npz"
     parser.add_argument(
         "out",
+        nargs="?",
         default=default_frames_path,
         type=Path,
         help="Path to the output frames file.",
