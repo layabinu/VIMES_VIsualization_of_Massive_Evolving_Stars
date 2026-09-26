@@ -716,12 +716,23 @@ def cli():
         description="Parse scaling and image settings.",
     )
 
-    default_frames_path = BASE_DIR / "frames_data.npz"
+    def existing_frames_path(value):
+        path = Path(value)
+
+        if not path.exists():
+            msg = f"{path} not found. Run vimes-preprocess first."
+            raise argparse.ArgumentTypeError(msg)
+
+        return path
+
+    # argparse type conversion doesn't applied to non-str values
+    # https://docs.python.org/3/library/argparse.html#default
+    default_frames_path = str(BASE_DIR / "frames_data.npz")
     parser.add_argument(
         "frames",
         nargs="?",
         default=default_frames_path,
-        type=Path,
+        type=existing_frames_path,
         help="Path to the input frames file.",
     )
 
@@ -755,10 +766,6 @@ def cli():
     )
 
     args = parser.parse_args()
-
-    if not args.frames.exists():
-        msg = f"{args.frames} not found. Run vimes-preprocess first."
-        raise FileNotFoundError(msg)
 
     print(f"scaling {args.scaling}, images {args.images}")
 

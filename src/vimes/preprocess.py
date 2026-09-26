@@ -269,12 +269,23 @@ def cli():
         description="Parse preprocessing settings.",
     )
 
-    default_hdf5_path = base_dir / "BSE_Detailed_Output_0.h5"
+    def existing_hdf5_path(value):
+        path = Path(value)
+
+        if not path.exists():
+            msg = f"{path} not found."
+            raise argparse.ArgumentTypeError(msg)
+
+        return path
+
+    # argparse type conversion doesn't applied to non-str values
+    # https://docs.python.org/3/library/argparse.html#default
+    default_hdf5_path = str(base_dir / "BSE_Detailed_Output_0.h5")
     parser.add_argument(
         "hdf5",
         nargs="?",
         default=default_hdf5_path,
-        type=Path,
+        type=existing_hdf5_path,
         help="Path to the input HDF5 file.",
     )
 
@@ -288,10 +299,6 @@ def cli():
     )
 
     args = parser.parse_args()
-
-    if not args.hdf5.exists():
-        msg = f"{args.hdf5} not found."
-        raise FileNotFoundError(msg)
 
     preprocess_to_frames(args.hdf5, args.out)
     add_temperatures_and_rgb(args.hdf5, args.out, args.out)
