@@ -711,14 +711,14 @@ def cli():
         "--scaling",
         choices=["log", "linear"],
         default="linear",
-        help="The type of scaling to apply (log or linear).",
+        help="The type of scaling to apply.",
     )
 
     parser.add_argument(
         "--images",
         choices=["tulips", "default"],
         default="default",
-        help="The set of images to use (tulips or default).",
+        help="The set of images to use.",
     )
 
     parser.add_argument(
