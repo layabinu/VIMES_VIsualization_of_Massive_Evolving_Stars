@@ -269,7 +269,7 @@ def cli():
         description="Parse preprocessing settings.",
     )
 
-    def existing_hdf5_path(value):
+    def existing_path(value):
         path = Path(value)
 
         if not path.exists():
@@ -285,16 +285,18 @@ def cli():
         "hdf5",
         nargs="?",
         default=default_hdf5_path,
-        type=existing_hdf5_path,
+        type=existing_path,
         help="Path to the input HDF5 file.",
     )
 
-    default_frames_path = base_dir / "frames_data.npz"
+    # argparse type conversion doesn't applied to non-str values
+    # https://docs.python.org/3/library/argparse.html#default
+    default_frames_path = str(base_dir / "frames_data.npz")
     parser.add_argument(
         "out",
         nargs="?",
         default=default_frames_path,
-        type=Path,
+        type=existing_path,
         help="Path to the output frames file.",
     )
 
