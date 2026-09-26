@@ -9,6 +9,7 @@ test with more extremes
     - large diffe4renes in radii for both stars
 """
 
+import enum
 import math
 from pathlib import Path
 
@@ -692,6 +693,22 @@ class PygameAnimator:
         pygame.quit()
 
 
+class ScalingType(enum.Enum):
+    LOG = "log"
+    LINEAR = "linear"
+
+    def __str__(self):
+        return self.value
+
+
+class ImageType(enum.Enum):
+    DEFAULT = "default"
+    TULIPS = "tulips"
+
+    def __str__(self):
+        return self.value
+
+
 def cli():
     import argparse
 
@@ -709,15 +726,17 @@ def cli():
 
     parser.add_argument(
         "--scaling",
-        choices=["log", "linear"],
-        default="linear",
+        type=ScalingType,
+        choices=list(ScalingType),
+        default=ScalingType.LINEAR,
         help="The type of scaling to apply.",
     )
 
     parser.add_argument(
         "--images",
-        choices=["tulips", "default"],
-        default="default",
+        type=ImageType,
+        choices=list(ImageType),
+        default=ImageType.DEFAULT,
         help="The set of images to use.",
     )
 
@@ -747,7 +766,7 @@ def cli():
         args.frames,
         save_mp4=args.save_mp4,
         no_display=args.no_display,
-        use_log_scaling=args.scaling == "log",
-        use_tulips_color=args.images == "tulips",
+        use_log_scaling=args.scaling is ScalingType.LOG,
+        use_tulips_color=args.images is ImageType.TULIPS,
     )
     animator.run()
