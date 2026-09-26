@@ -32,8 +32,8 @@ dependencies = [
 ]
 
 [project.scripts]
-vimes = "vimes.cli:animate"
-vimes-preprocess = "vimes.cli:preprocess"
+vimes = "vimes.animate:cli"
+vimes-preprocess = "vimes.preprocess:cli"
 
 [dependency-groups]
 dev = [
