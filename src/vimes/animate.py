@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 make animation using the .npz file
 
@@ -11,31 +9,17 @@ test with more extremes
     - large diffe4renes in radii for both stars
 """
 
-import argparse
 import math
-import os
 from pathlib import Path
 
 import imageio
 import numpy as np
+import pygame
 from PIL import Image
-
-# --- HEADLESS SDL SETUP (must be before pygame import) ---
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument("--no-display", action="store_true")
-args, _ = parser.parse_known_args()
-
-if args.no_display:
-    os.environ["SDL_VIDEODRIVER"] = "dummy"
-# --------------------------------------------------------
-
-
-import pygame  # noqa: E402
-from pygame import gfxdraw  # noqa: E402
+from pygame import gfxdraw
 
 BASE_DIR = Path(__file__).parent
 STELLAR_IMG_DIR = BASE_DIR / "Images"
-FRAMES_FILE = BASE_DIR / "frames_data.npz"
 BACKGROUND_PATH = STELLAR_IMG_DIR / "Background.png"
 CE_OVERLAY_PATH = STELLAR_IMG_DIR / "common_envelope.png"
 
@@ -44,9 +28,6 @@ SCREEN_SIZE = (1008, 800)
 FPS_PLAYBACK = 50
 PIXELS_AT_REF = 100
 PIXELS_AT_REF_LIN = 300
-USE_LOG_SCALING = False  # True = log scaling, False = linear scaling
-USE_TULIPS_COLOR = False  # True = colored circles, False = stellar images
-# the true false things are now through the terminal commmand to run the animation
 
 
 # helpers
@@ -709,64 +690,3 @@ class PygameAnimator:
             self.video_writer.close()
 
         pygame.quit()
-
-
-def parse_cmd_arguments():
-
-    parser = argparse.ArgumentParser(description="Process scaling and image settings.")
-
-    parser.add_argument(
-        "--scaling",
-        choices=["log", "linear"],
-        help="The type of scaling to apply (log or linear).",
-    )
-
-    parser.add_argument(
-        "--images",
-        choices=["tulips", "default"],
-        help="The set of images to use (tulips or default).",
-    )
-
-    parser.add_argument(
-        "--save-mp4", type=str, default=None, help="Save animation to MP4 file"
-    )
-
-    parser.add_argument(
-        "--no-display", action="store_true", help="Run headless (do not open a window)"
-    )
-
-    return parser.parse_args()
-
-
-def main():
-    global USE_LOG_SCALING
-    global USE_TULIPS_COLOR
-
-    if not FRAMES_FILE.exists():
-        raise FileNotFoundError(
-            "frames_data.npz not found. Run compas_preprocess.py first."
-        )
-    args = parse_cmd_arguments()
-    if args.scaling == "log":
-        USE_LOG_SCALING = True
-    elif args.scaling == "linear":
-        USE_LOG_SCALING = False
-
-    if args.images == "tulips":
-        USE_TULIPS_COLOR = True
-    elif args.images == "default":
-        USE_TULIPS_COLOR = False
-
-    print(f"scaling {args.scaling}, images {args.images}")
-    animator = PygameAnimator(
-        FRAMES_FILE,
-        save_mp4=args.save_mp4,
-        no_display=args.no_display,
-        use_log_scaling=USE_LOG_SCALING,
-        use_tulips_color=USE_TULIPS_COLOR,
-    )
-    animator.run()
-
-
-if __name__ == "__main__":
-    main()
