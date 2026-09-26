@@ -719,6 +719,7 @@ def cli():
     default_frames_path = BASE_DIR / "frames_data.npz"
     parser.add_argument(
         "frames",
+        nargs="?",
         default=default_frames_path,
         type=Path,
         help="Path to the input frames file.",
