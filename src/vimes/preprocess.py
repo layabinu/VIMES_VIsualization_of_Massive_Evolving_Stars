@@ -290,7 +290,8 @@ def cli():
     args = parser.parse_args()
 
     if not args.hdf5.exists():
-        raise FileNotFoundError(f"{args.hdf5} not found.")
+        msg = f"{args.hdf5} not found."
+        raise FileNotFoundError(msg)
 
     preprocess_to_frames(args.hdf5, args.out)
     add_temperatures_and_rgb(args.hdf5, args.out, args.out)
