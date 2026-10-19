@@ -44,7 +44,7 @@ SCREEN_SIZE = (1008, 800)
 FPS_PLAYBACK = 50
 PIXELS_AT_REF = 100
 PIXELS_AT_REF_LIN = 300
-USE_LOG_SCALING = False  # True = log scaling, False = linear scaling
+USE_LOG_SCALING = True  # True = log scaling, False = linear scaling
 USE_TULIPS_COLOR = False  # True = colored circles, False = stellar images
 # the true false things are now through the terminal commmand to run the animation
 
@@ -451,23 +451,47 @@ class PygameAnimator:
                 txt2_surf, (sx2 + r2w // 2 + 5, sy2 - txt2_surf.get_height() // 2)
             )
 
-            t_max = max(
-                f_["Time"] for f_ in self.frames
-            )  # maximum simulation time in Myr
+            t_values = [float(f_["Time"]) for f_ in self.frames if np.isfinite(f_["Time"])]
+            if not t_values:
+                t_min = 0.0
+                t_max = 1.0
+            else:
+                t_min = min(t_values)
+                t_max = max(t_values)
 
-            # determine rounding and tick interval
-            if t_max <= 10:
-                t_max_round = math.ceil(t_max)  # nearest 1 Myr
+            if t_max <= t_min:
+                t_max = t_min + 1.0
+
+            span = max(t_max - t_min, 1e-9)
+
+            # determine rounding and tick interval based on the visible span
+            if span <= 10:
+                t_max_round = math.ceil(span)  # nearest 1 Myr
                 tick_interval = 1
                 small_tick_interval = 0.5
-            elif t_max <= 100:
-                t_max_round = math.ceil(t_max / 5) * 5  # nearest 5 Myr
+            elif span <= 100:
+                t_max_round = math.ceil(span / 5) * 5  # nearest 5 Myr
                 tick_interval = 5
                 small_tick_interval = 1
+            elif span <= 1000:
+                t_max_round = math.ceil(span / 50) * 50  # nearest 50 Myr
+                tick_interval = 50
+                small_tick_interval = 10
+            elif span <= 5000:
+                t_max_round = math.ceil(span / 100) * 100  # nearest 100 Myr
+                tick_interval = 100
+                small_tick_interval = 20
             else:
-                t_max_round = math.ceil(t_max / 10) * 10  # >=100 Myr, round 10 Myr
-                tick_interval = 10
-                small_tick_interval = 2
+                t_max_round = math.ceil(span / 500) * 500  # nearest 500 Myr
+                tick_interval = 500
+                small_tick_interval = 100
+
+            # enforce a maximum of 10 numbered ticks on the axis
+            max_num_labels = 10
+            while tick_interval > 0 and t_max_round / tick_interval > max_num_labels:
+                tick_interval *= 2
+                if small_tick_interval > 0:
+                    small_tick_interval *= 2
             text_block_max_width = 300
             buffer = 20
             # space between text and timeline
@@ -488,7 +512,9 @@ class PygameAnimator:
             num_major_ticks = int(t_max_round / tick_interval) + 1
             for i in range(num_major_ticks):
                 t = i * tick_interval
-                x = int(timeline_x_start + (t / t_max_round) * timeline_length_px)
+                if t < 0:
+                    continue
+                x = int(timeline_x_start + (t / max(t_max_round, 1e-9)) * timeline_length_px)
                 pygame.draw.line(
                     self.screen,
                     (255, 255, 255),
@@ -506,9 +532,9 @@ class PygameAnimator:
             num_minor_ticks = int(t_max_round / small_tick_interval) + 1
             for i in range(num_minor_ticks):
                 t = i * small_tick_interval
-                if t % tick_interval == 0:
+                if t < 0 or t % tick_interval == 0:
                     continue
-                x = int(timeline_x_start + (t / t_max_round) * timeline_length_px)
+                x = int(timeline_x_start + (t / max(t_max_round, 1e-9)) * timeline_length_px)
                 pygame.draw.line(
                     self.screen,
                     (255, 255, 255),
@@ -518,8 +544,14 @@ class PygameAnimator:
                 )
 
             # current frame time
-            t_now = f["Time"]
-            x_dot = int(timeline_x_start + (t_now / t_max_round) * timeline_length_px)
+            t_now = float(f["Time"])
+            if not math.isfinite(t_now):
+                t_now = t_min
+            t_now_clamped = min(max(t_now, t_min), t_max)
+            x_dot = int(
+                timeline_x_start
+                + ((t_now_clamped - t_min) / max(span, 1e-9)) * timeline_length_px
+            )
             pygame.draw.circle(self.screen, (255, 0, 0), (x_dot, timeline_y), 6)
 
             label_surf = self.font.render("Time in Myr", True, (255, 255, 255))
