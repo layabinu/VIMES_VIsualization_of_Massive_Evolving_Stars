@@ -64,9 +64,9 @@ def load_hdf5_and_mask(path):
 
     mask = (record_type == 4) | (mt_timescale == 3)
 
-    Data = {key: val[()][mask] for key, val in f.items()}
+    data = {key: val[()][mask] for key, val in f.items()}
     f.close()
-    return Data
+    return data
 
 
 # helper functions
@@ -119,23 +119,23 @@ def detect_large_jump(
     return abs(v1 - v2) >= threshold_abs
 
 
-def make_event_string(idx, Data, type_map):
+def make_event_string(idx, data, type_map):
     if idx == 0:
         return (
-            f"Zero-age main-sequence, Z = {float(Data['Metallicity@ZAMS(1)'][0]):.4f}"
+            f"Zero-age main-sequence, Z = {float(data['Metallicity@ZAMS(1)'][0]):.4f}"
         )
-    t1 = type_map(Data["Stellar_Type(1)"][idx])
-    t2 = type_map(Data["Stellar_Type(2)"][idx])
+    t1 = type_map(data["Stellar_Type(1)"][idx])
+    t2 = type_map(data["Stellar_Type(2)"][idx])
     return f"Phase: {t1} + {t2}"
 
 
 # actual code
 def preprocess_to_frames(hdf5_path, out_path):
     print("Loading HDF5...")
-    Data = load_hdf5_and_mask(hdf5_path)
+    data = load_hdf5_and_mask(hdf5_path)
     type_map = get_stellar_types()
-    phases = detect_phases_indices(Data["Stellar_Type(1)"], Data["Stellar_Type(2)"])
-    mt_starts = detect_mt_starts(Data["MT_History"].astype(int))
+    phases = detect_phases_indices(data["Stellar_Type(1)"], data["Stellar_Type(2)"])
+    mt_starts = detect_mt_starts(data["MT_History"].astype(int))
 
     frames = []
 
@@ -155,11 +155,11 @@ def preprocess_to_frames(hdf5_path, out_path):
                 "Mass(1)",
                 "Mass(2)",
             ]:
-                f[k] = interp(Data[k], pos)
+                f[k] = interp(data[k], pos)
 
-            f["stypeName1"] = type_map(round(interp(Data["Stellar_Type(1)"], pos)))
-            f["stypeName2"] = type_map(round(interp(Data["Stellar_Type(2)"], pos)))
-            f["eventString"] = make_event_string(round(pos), Data, type_map)
+            f["stypeName1"] = type_map(round(interp(data["Stellar_Type(1)"], pos)))
+            f["stypeName2"] = type_map(round(interp(data["Stellar_Type(2)"], pos)))
+            f["eventString"] = make_event_string(round(pos), data, type_map)
             sampled.append(f)
 
         # interpolation
@@ -205,8 +205,8 @@ def preprocess_to_frames(hdf5_path, out_path):
             data_idx = round(start + (end - start) * (i / max(1, len(enhanced) - 1)))
 
             is_ce_event = (
-                data_idx < len(Data["MassTransferTimescale"])
-                and int(Data["MassTransferTimescale"][data_idx]) == 3
+                data_idx < len(data["MassTransferTimescale"])
+                and int(data["MassTransferTimescale"][data_idx]) == 3
             )
 
             if is_ce_event:
