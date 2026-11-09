@@ -44,9 +44,6 @@ SCREEN_SIZE = (1008, 800)
 FPS_PLAYBACK = 50
 PIXELS_AT_REF = 100
 PIXELS_AT_REF_LIN = 300
-USE_LOG_SCALING = False  # True = log scaling, False = linear scaling
-USE_TULIPS_COLOR = False  # True = colored circles, False = stellar images
-# the true false things are now through the terminal commmand to run the animation
 
 
 # helpers
@@ -739,31 +736,19 @@ def parse_cmd_arguments():
 
 
 def main():
-    global USE_LOG_SCALING
-    global USE_TULIPS_COLOR
-
     if not FRAMES_FILE.exists():
         raise FileNotFoundError(
             "frames_data.npz not found. Run compas_preprocess.py first."
         )
     args = parse_cmd_arguments()
-    if args.scaling == "log":
-        USE_LOG_SCALING = True
-    elif args.scaling == "linear":
-        USE_LOG_SCALING = False
-
-    if args.images == "tulips":
-        USE_TULIPS_COLOR = True
-    elif args.images == "default":
-        USE_TULIPS_COLOR = False
 
     print(f"scaling {args.scaling}, images {args.images}")
     animator = PygameAnimator(
         FRAMES_FILE,
         save_mp4=args.save_mp4,
         no_display=args.no_display,
-        use_log_scaling=USE_LOG_SCALING,
-        use_tulips_color=USE_TULIPS_COLOR,
+        use_log_scaling=args.scaling == "log",
+        use_tulips_color=args.images == "tulips",
     )
     animator.run()
 
