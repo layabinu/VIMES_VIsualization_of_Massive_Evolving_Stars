@@ -9,12 +9,15 @@ test with more extremes
     - large diffe4renes in radii for both stars
 """
 
+import enum
 import math
 from pathlib import Path
+from typing import Annotated
 
 import imageio
 import numpy as np
 import pygame
+import typer
 from PIL import Image
 from pygame import gfxdraw
 
@@ -690,3 +693,75 @@ class PygameAnimator:
             self.video_writer.close()
 
         pygame.quit()
+
+
+class ScalingType(enum.Enum):
+    LOG = "log"
+    LINEAR = "linear"
+
+
+class ImageType(enum.Enum):
+    DEFAULT = "default"
+    TULIPS = "tulips"
+
+
+cli_app = typer.Typer(
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
+
+
+def existing_frames_path(value: Path) -> Path:
+    if not value.exists():
+        msg =  f"{value} does not exist. Run vimes-preprocess first."
+        raise typer.BadParameter(msg)
+
+    return value
+
+
+FramesOptionType = Annotated[
+    Path,
+    typer.Argument(
+        callback=existing_frames_path,
+        help="Path to the input frames file.",
+    ),
+]
+
+ScalingOptionType = Annotated[
+    ScalingType,
+    typer.Option(help="The type of scaling to apply."),
+]
+
+ImagesOptionType = Annotated[
+    ImageType,
+    typer.Option(help="The set of images to use."),
+]
+
+SaveMp4OptionType = Annotated[
+    str | None,
+    typer.Option(help="Save animation to MP4 file"),
+]
+
+NoDisplayOptionType = Annotated[
+    bool,
+    typer.Option("--no-display", help="Run headless (do not open a window)"),
+]
+
+
+@cli_app.command()
+def cli(
+    frames: FramesOptionType = BASE_DIR / "frames_data.npz",
+    scaling: ScalingOptionType = ScalingType.LINEAR,
+    images: ImagesOptionType = ImageType.DEFAULT,
+    save_mp4: SaveMp4OptionType = None,
+    no_display: NoDisplayOptionType = False,
+) -> None:
+    typer.echo(f"scaling {scaling.value}, images {images.value}")
+
+    animator = PygameAnimator(
+        frames,
+        save_mp4=save_mp4,
+        no_display=no_display,
+        use_log_scaling=scaling is ScalingType.LOG,
+        use_tulips_color=images is ImageType.TULIPS,
+    )
+    animator.run()
